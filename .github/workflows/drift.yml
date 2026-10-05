@@ -1,0 +1,26 @@
+name: drift-report
+
+on:
+  schedule:
+    # 4th of each month, 09:23 UTC — off-peak minute on purpose
+    - cron: "23 9 4 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: run drift check
+        run: |
+          mkdir -p reports
+          { echo "## $(date -u +%F)"; ./scripts/drift-check.sh; echo; } >> reports/drift-log.md
+      - name: commit report if changed
+        run: |
+          git config user.name "orvii-bot"
+          git config user.email "bot@orvii.local"
+          git add reports/drift-log.md
+          git diff --cached --quiet || { git commit -m "chore(atlas): monthly drift report"; git push; }
