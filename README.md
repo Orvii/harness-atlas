@@ -40,3 +40,5 @@ Take `sandboxing ◐` on some row. It means: on the cited date, the cited doc pa
 ---
 
 Orvii — Open, Research, Vision, Innovation & Ideas. Regenerate with `scripts/generate.py` against a fresh research journal; see METHODOLOGY.
+
+Part of the Orvii research set: [convention-map](https://github.com/Orvii/convention-map) · [bench-notes](https://github.com/Orvii/bench-notes) · [equivalence-notes](https://github.com/Orvii/equivalence-notes) · [provider-reliability](https://github.com/Orvii/provider-reliability) · [context-file-evidence](https://github.com/Orvii/context-file-evidence) · [retractions](https://github.com/Orvii/retractions) · [svg-instruments](https://github.com/Orvii/svg-instruments).
