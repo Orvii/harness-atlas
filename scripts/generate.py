@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Regenerate harnesses/*.md, matrix.md and matrix.yaml from a workflow journal.
 
-Usage: python3 scripts/generate.py <journal.jsonl>
-The journal is the result log of the harness-atlas-research workflow: one
-{"type":"result","result":{...}} line per harness researcher.
+Usage: python3 scripts/generate.py <journal.jsonl> [more-journals...]
+Each journal is a workflow result log: one {"type":"result","result":{...}}
+line per researcher. Results carrying "features" supply capability rows;
+results carrying "architecture" supply deep-dive sections. Multiple journals
+merge by harness name (later files win on conflicts, deep fields merge in).
 """
 import json
 import re
@@ -33,17 +35,36 @@ def slug(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
-def main(journal: Path, out: Path) -> None:
-    rows = []
-    for line in journal.read_text().splitlines():
-        if not line.strip():
-            continue
-        m = json.loads(line)
-        if m.get("type") == "result" and isinstance(m.get("result"), dict):
-            rows.append(m["result"])
-    rows.sort(key=lambda r: slug(r["harness"]))
+DEEP_FIELDS = ("architecture", "context_mgmt", "ecosystem", "governance", "limitations", "quotes", "docs_map")
+
+
+def load(journals: list) -> list:
+    merged = {}
+    for journal in journals:
+        for line in Path(journal).read_text().splitlines():
+            if not line.strip():
+                continue
+            m = json.loads(line)
+            r = m.get("result")
+            if m.get("type") != "result" or not isinstance(r, dict) or "harness" not in r:
+                continue
+            key = slug(r["harness"])
+            cur = merged.setdefault(key, {"harness": r["harness"], "features": []})
+            for field in ("repo", "version", "version_source", "docs_home", "promises", "surprises"):
+                if r.get(field):
+                    cur[field] = r[field]
+            if r.get("features"):
+                cur["features"] = r["features"]
+            for field in DEEP_FIELDS:
+                if r.get(field):
+                    cur[field] = r[field]
+    return sorted(merged.values(), key=lambda r: slug(r["harness"]))
+
+
+def main(journals: list, out: Path) -> None:
+    rows = load(journals)
     if not rows:
-        sys.exit("no results in journal")
+        sys.exit("no results in journals")
 
     (out / "harnesses").mkdir(exist_ok=True)
     for r in rows:
@@ -72,8 +93,25 @@ def main(journal: Path, out: Path) -> None:
                 continue
             note = (f.get("note") or "").replace("|", "\\|").replace("\n", " ")
             lines.append(f"| {fid} | {SYMBOL[f['supported']]} {f['supported']} | {note} | [src]({f['evidence_url']}) |")
+        if r.get("architecture"):
+            lines += ["", "## Architecture", "", r["architecture"]]
+        if r.get("context_mgmt"):
+            lines += ["", "## Context management", "", r["context_mgmt"]]
+        if r.get("ecosystem"):
+            lines += ["", "## Ecosystem", "", r["ecosystem"]]
+        if r.get("governance"):
+            lines += ["", "## Governance", "", r["governance"]]
+        if r.get("limitations"):
+            lines += ["", "## Limitations", "", r["limitations"]]
+        if r.get("quotes"):
+            lines += ["", "## In its own words", ""]
+            for q in r["quotes"]:
+                lines.append(f"> {q['text']}  \n> — [{q['url']}]({q['url']})")
+                lines.append("")
         if r.get("surprises"):
             lines += ["", "## Notable", "", r["surprises"]]
+        if r.get("docs_map"):
+            lines += ["", "## Sources fetched", ""] + [f"- {u}" for u in r["docs_map"]]
         (out / "harnesses" / f"{s}.md").write_text("\n".join(lines) + "\n")
 
     # matrix.md
@@ -108,4 +146,6 @@ def main(journal: Path, out: Path) -> None:
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]), Path(__file__).resolve().parent.parent)
+    if len(sys.argv) < 2:
+        sys.exit(__doc__)
+    main(sys.argv[1:], Path(__file__).resolve().parent.parent)
