@@ -36,6 +36,19 @@ for repo, pin in sorted(repos.items()):
     if not out or out.startswith("{"):
         print(f"?  {path}: pin {pin} — no release found (registry-pinned or renamed)")
         continue
+    # repos with multiple release streams (CLI + SDK tags): latest may belong
+    # to another stream. Fall back to the newest tag in the pin's prefix family.
+    pin_prefix = re.match(r"^[^-]*", pin).group(0)
+    tag_prefix = re.match(r"^[^-]*", out).group(0)
+    if pin_prefix != tag_prefix:
+        tags = subprocess.run(
+            ["gh", "api", f"repos/{path}/releases", "--jq", ".[].tag_name"],
+            capture_output=True, text=True, timeout=30,
+        ).stdout.split()
+        stable = [t for t in tags if not re.search(r"nightly|-(pre|rc|beta|alpha)\b", t, re.I)]
+        same = [t for t in stable if re.match(r"^[^-]*", t).group(0) == pin_prefix]
+        if same:
+            out = same[0]
     if out != pin:
         drift += 1
         print(f"Δ  {path}: pinned {pin} → latest {out}")
