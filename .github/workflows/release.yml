@@ -1,0 +1,93 @@
+name: auto-release
+
+# A citable release for every data change, without a human remembering to
+# tag. Data changes = harnesses/, the matrix, or the synthesis docs.
+# Tooling (scripts/), the generated site (docs/) and CI reports (reports/)
+# are deliberately NOT triggers: the site follows the data commit that
+# already bumped, and reports are the drift log, not the dataset.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "harnesses/**"
+      - "matrix.md"
+      - "matrix.yaml"
+      - "SYNTHESIS.md"
+      - "TRUST.md"
+      - "GATES.md"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need tag history to compute the next version
+
+      - name: compute next version
+        id: ver
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, os
+          def ids(ref=None):
+              cmd = ["git", "show", f"{ref}:matrix.yaml"] if ref else ["cat", "matrix.yaml"]
+              out = subprocess.run(cmd, capture_output=True, text=True).stdout
+              return set(re.findall(r"^  - id: (\S+)", out, re.M))
+          tags = subprocess.run(["git", "tag", "--list", "v*"], capture_output=True, text=True).stdout.split()
+          prev = sorted(tags, key=lambda t: [int(x) for x in re.findall(r"\d+", t)])[-1] if tags else "v0.0"
+          cur, old = ids(), ids(prev) if prev != "v0.0" else set()
+          added, removed = cur - old, old - cur
+          base = [int(x) for x in re.findall(r"\d+", prev)]
+          while len(base) < 2: base.append(0)
+          if added or removed:
+              nxt = f"v{base[0]}.{base[1] + 1}"
+              kind = "minor"
+          else:
+              patch = base[2] if len(base) > 2 else 0
+              nxt = f"v{base[0]}.{base[1]}.{patch + 1}"
+              kind = "patch"
+          if nxt in tags:
+              print(f"::notice::tag {nxt} already exists; skipping")
+              print("skip=true")
+          else:
+              print(f"version={nxt}")
+              print(f"kind={kind}")
+              print(f"added={','.join(sorted(added)) or '-'}")
+              print(f"removed={','.join(sorted(removed)) or '-'}")
+              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                  f.write(f"version={nxt}\nkind={kind}\n")
+                  f.write(f"added={','.join(sorted(added)) or '-'}\n")
+                  f.write(f"removed={','.join(sorted(removed)) or '-'}\n")
+                  f.write("skip=false\n")
+          PY
+
+      - name: tag and release
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          ADDED="${{ steps.ver.outputs.added }}"
+          REMOVED="${{ steps.ver.outputs.removed }}"
+          AS_OF=$(grep -m1 '^as_of:' matrix.yaml | sed 's/as_of: *"\?\([0-9-]*\)"\?/\1/')
+          {
+            echo "Auto-released from the data commit that triggered this run."
+            echo
+            echo "- snapshot: ${AS_OF}"
+            echo "- harness rows: $(grep -c '^  - id:' matrix.yaml)"
+            if [ "$ADDED" != "-" ]; then echo "- rows added: ${ADDED}"; fi
+            if [ "$REMOVED" != "-" ]; then echo "- rows removed: ${REMOVED}"; fi
+            echo
+            echo "Cells move as vendors ship; cite this release, not a date."
+            echo "Query the grid: https://orvii.github.io/harness-atlas/"
+            echo "Stale pins are reported monthly in reports/drift-log.md."
+          } > /tmp/notes.md
+          git config user.name "orvii-bot"
+          git config user.email "bot@orvii.local"
+          git tag -a "$V" -m "harness-atlas $V — auto-released data snapshot ${AS_OF}"
+          git push origin "$V"
+          gh release create "$V" --title "$V — data snapshot ${AS_OF}" --notes-file /tmp/notes.md
