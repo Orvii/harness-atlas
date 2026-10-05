@@ -18,9 +18,11 @@ jobs:
         run: |
           mkdir -p reports
           { echo "## $(date -u +%F)"; ./scripts/drift-check.sh; echo; } >> reports/drift-log.md
-      - name: commit report if changed
+      - name: run link-rot check
+        run: ./scripts/link-rot.sh
+      - name: commit reports if changed
         run: |
           git config user.name "orvii-bot"
           git config user.email "bot@orvii.local"
-          git add reports/drift-log.md
-          git diff --cached --quiet || { git commit -m "chore(atlas): monthly drift report"; git push; }
+          git add reports/
+          git diff --cached --quiet || { git commit -m "chore(atlas): monthly drift + link-rot reports"; git push; }
