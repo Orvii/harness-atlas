@@ -107,6 +107,22 @@ td { text-align: center; padding: 0; }
 .cell:hover { background: var(--panel2); transform: scale(1.12); }
 td.dim .cell { opacity: .22; }
 td.hot { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.cmp {
+  position: absolute; right: 6px; top: 12px; width: 26px; height: 26px;
+  background: transparent; border: 1px solid var(--line); color: var(--faint);
+  border-radius: 6px; cursor: pointer; font-size: 13px; line-height: 1;
+}
+.cmp:hover { color: var(--accent); border-color: var(--accent); }
+.cmp[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #0b0806; }
+#compare { padding: 4px 0 8px; }
+#compare .eyebrow { margin-bottom: 10px; }
+#compare table { border-collapse: collapse; width: 100%; }
+#compare th, #compare td { border: 1px solid var(--line); padding: 7px 10px; font-size: 12.5px; text-align: center; }
+#compare thead th { background: var(--panel); color: var(--ink); font-size: 13px; }
+#compare th:first-child, #compare td:first-child { text-align: left; color: var(--muted); width: 160px; }
+#compare tr.diff td { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+#compare tr.diff td:first-child { border-left: 2px solid var(--accent); color: var(--ink); }
+#compare .pin { color: var(--faint); font-size: 10.5px; }
 
 .drawer {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
@@ -169,6 +185,7 @@ footer p { max-width: 80ch; }
     <span class="chip">release <b id="chip-ver"></b></span>
     <span class="chip"><b id="chip-n"></b> harnesses</span>
     <span class="chip">every cell cites a fetched doc</span>
+    <a class="chip" href="./method.html" style="text-decoration:none;color:var(--muted)">why trust this →</a>
   </div>
 </header>
 
@@ -182,6 +199,11 @@ footer p { max-width: 80ch; }
     <i style="color:var(--yes)">● yes</i><i style="color:var(--partial)">◐ partial</i><i style="color:var(--no)">○ no</i><i> ? unknown</i>
   </span>
 </div>
+
+<section class="wrap" id="compare" hidden>
+  <p class="eyebrow">side by side · rows where they disagree are lit</p>
+  <div style="overflow-x:auto"><table id="cmp-table"></table></div>
+</section>
 
 <main class="wrap gridwrap">
   <table class="grid" id="grid"></table>
@@ -236,7 +258,7 @@ function render(rows) {
     DATA.caps.map(c => `<th scope="col" data-cap="${c}">${DATA.cap_label[c]}</th>`).join("") + "</tr></thead>";
   const body = "<tbody>" + rows.map((h, i) =>
     `<tr class="row" style="animation-delay:${Math.min(i * 35, 500)}ms">` +
-    `<th scope="row"><a href="https://github.com/Orvii/harness-atlas/blob/main/harnesses/${h.id}.md">${h.name}<span class="pin">${esc(h.version.split(" — ")[0].slice(0, 42))}</span></a></th>` +
+    `<th scope="row"><a href="https://github.com/Orvii/harness-atlas/blob/main/harnesses/${h.id}.md">${h.name}<span class="pin">${esc(h.version.split(" — ")[0].slice(0, 42))}</span></a><button class="cmp" data-h="${h.id}" aria-pressed="false" title="add to comparison" aria-label="compare ${esc(h.name)}">⇄</button></th>` +
     h.caps.map(c =>
       `<td data-cap="${c.cap}"><button class="cell" data-s="${c.support}" data-h="${h.id}" data-c="${c.cap}" aria-label="${esc(h.name)} — ${DATA.cap_label[c.cap]}: ${WORD[c.support]}">${SYM[c.support]}</button></td>`
     ).join("") + "</tr>"
@@ -258,6 +280,40 @@ capSel.addEventListener("change", applyCap);
 document.getElementById("q").addEventListener("input", e => {
   const q = e.target.value.trim().toLowerCase();
   render(DATA.harnesses.filter(h => h.name.toLowerCase().includes(q)));
+});
+
+const picked = [];
+function renderCompare() {
+  const box = document.getElementById("compare");
+  const tbl = document.getElementById("cmp-table");
+  const hs = picked.map(id => DATA.harnesses.find(h => h.id === id)).filter(Boolean);
+  if (hs.length < 2) { box.hidden = true; tbl.innerHTML = ""; return; }
+  box.hidden = false;
+  const head = "<thead><tr><th>capability</th>" +
+    hs.map(h => `<th>${esc(h.name)}<br><span class="pin">${esc(h.version.split(" — ")[0].slice(0, 34))}</span></th>`).join("") +
+    "</tr></thead>";
+  const body = "<tbody>" + DATA.caps.map(cap => {
+    const cells = hs.map(h => h.caps.find(c => c.cap === cap));
+    const vals = cells.map(c => c.support);
+    const differs = new Set(vals).size > 1;
+    return `<tr class="${differs ? "diff" : ""}"><td>${DATA.cap_label[cap]}</td>` +
+      cells.map(c => `<td style="color:var(--${c.support === "yes" ? "yes" : c.support === "partial" ? "partial" : c.support === "no" ? "no" : "unknown"})">${SYM[c.support]}</td>`).join("") +
+      "</tr>";
+  }).join("") + "</tbody>";
+  tbl.innerHTML = head + body;
+}
+document.getElementById("grid").addEventListener("click", e => {
+  const b = e.target.closest(".cmp");
+  if (!b) return;
+  e.stopPropagation();
+  const i = picked.indexOf(b.dataset.h);
+  if (i >= 0) picked.splice(i, 1);
+  else if (picked.length >= 4) picked.shift();
+  else picked.push(b.dataset.h);
+  document.querySelectorAll(".cmp").forEach(x =>
+    x.setAttribute("aria-pressed", picked.includes(x.dataset.h)));
+  renderCompare();
+  if (picked.length >= 2) document.getElementById("compare").scrollIntoView({ block: "nearest" });
 });
 
 let CURRENT = null;

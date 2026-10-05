@@ -161,6 +161,12 @@ def main():
     html = TEMPLATE.replace("__DATA__", json.dumps(payload, ensure_ascii=False))
     SITE.mkdir(exist_ok=True)
     (SITE / "index.html").write_text(html)
+    style = re.search(r"<style>(.*?)</style>", TEMPLATE, re.S).group(1)
+    (SITE / "method.html").write_text(METHOD_TEMPLATE
+                                      .replace("__CSS__", style)
+                                      .replace("__AS_OF__", as_of)
+                                      .replace("__VERSION__", version)
+                                      .replace("__N__", str(len(harnesses))))
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {SITE.relative_to(ROOT)}/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
     missing = sum(1 for h in harnesses for c in h["caps"] if c["support"] != "unknown" and not c["evidence"])
@@ -278,6 +284,22 @@ td { text-align: center; padding: 0; }
 .cell:hover { background: var(--panel2); transform: scale(1.12); }
 td.dim .cell { opacity: .22; }
 td.hot { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.cmp {
+  position: absolute; right: 6px; top: 12px; width: 26px; height: 26px;
+  background: transparent; border: 1px solid var(--line); color: var(--faint);
+  border-radius: 6px; cursor: pointer; font-size: 13px; line-height: 1;
+}
+.cmp:hover { color: var(--accent); border-color: var(--accent); }
+.cmp[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #0b0806; }
+#compare { padding: 4px 0 8px; }
+#compare .eyebrow { margin-bottom: 10px; }
+#compare table { border-collapse: collapse; width: 100%; }
+#compare th, #compare td { border: 1px solid var(--line); padding: 7px 10px; font-size: 12.5px; text-align: center; }
+#compare thead th { background: var(--panel); color: var(--ink); font-size: 13px; }
+#compare th:first-child, #compare td:first-child { text-align: left; color: var(--muted); width: 160px; }
+#compare tr.diff td { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+#compare tr.diff td:first-child { border-left: 2px solid var(--accent); color: var(--ink); }
+#compare .pin { color: var(--faint); font-size: 10.5px; }
 
 .drawer {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
@@ -340,6 +362,7 @@ footer p { max-width: 80ch; }
     <span class="chip">release <b id="chip-ver"></b></span>
     <span class="chip"><b id="chip-n"></b> harnesses</span>
     <span class="chip">every cell cites a fetched doc</span>
+    <a class="chip" href="./method.html" style="text-decoration:none;color:var(--muted)">why trust this →</a>
   </div>
 </header>
 
@@ -353,6 +376,11 @@ footer p { max-width: 80ch; }
     <i style="color:var(--yes)">● yes</i><i style="color:var(--partial)">◐ partial</i><i style="color:var(--no)">○ no</i><i> ? unknown</i>
   </span>
 </div>
+
+<section class="wrap" id="compare" hidden>
+  <p class="eyebrow">side by side · rows where they disagree are lit</p>
+  <div style="overflow-x:auto"><table id="cmp-table"></table></div>
+</section>
 
 <main class="wrap gridwrap">
   <table class="grid" id="grid"></table>
@@ -407,7 +435,7 @@ function render(rows) {
     DATA.caps.map(c => `<th scope="col" data-cap="${c}">${DATA.cap_label[c]}</th>`).join("") + "</tr></thead>";
   const body = "<tbody>" + rows.map((h, i) =>
     `<tr class="row" style="animation-delay:${Math.min(i * 35, 500)}ms">` +
-    `<th scope="row"><a href="https://github.com/Orvii/harness-atlas/blob/main/harnesses/${h.id}.md">${h.name}<span class="pin">${esc(h.version.split(" — ")[0].slice(0, 42))}</span></a></th>` +
+    `<th scope="row"><a href="https://github.com/Orvii/harness-atlas/blob/main/harnesses/${h.id}.md">${h.name}<span class="pin">${esc(h.version.split(" — ")[0].slice(0, 42))}</span></a><button class="cmp" data-h="${h.id}" aria-pressed="false" title="add to comparison" aria-label="compare ${esc(h.name)}">⇄</button></th>` +
     h.caps.map(c =>
       `<td data-cap="${c.cap}"><button class="cell" data-s="${c.support}" data-h="${h.id}" data-c="${c.cap}" aria-label="${esc(h.name)} — ${DATA.cap_label[c.cap]}: ${WORD[c.support]}">${SYM[c.support]}</button></td>`
     ).join("") + "</tr>"
@@ -429,6 +457,40 @@ capSel.addEventListener("change", applyCap);
 document.getElementById("q").addEventListener("input", e => {
   const q = e.target.value.trim().toLowerCase();
   render(DATA.harnesses.filter(h => h.name.toLowerCase().includes(q)));
+});
+
+const picked = [];
+function renderCompare() {
+  const box = document.getElementById("compare");
+  const tbl = document.getElementById("cmp-table");
+  const hs = picked.map(id => DATA.harnesses.find(h => h.id === id)).filter(Boolean);
+  if (hs.length < 2) { box.hidden = true; tbl.innerHTML = ""; return; }
+  box.hidden = false;
+  const head = "<thead><tr><th>capability</th>" +
+    hs.map(h => `<th>${esc(h.name)}<br><span class="pin">${esc(h.version.split(" — ")[0].slice(0, 34))}</span></th>`).join("") +
+    "</tr></thead>";
+  const body = "<tbody>" + DATA.caps.map(cap => {
+    const cells = hs.map(h => h.caps.find(c => c.cap === cap));
+    const vals = cells.map(c => c.support);
+    const differs = new Set(vals).size > 1;
+    return `<tr class="${differs ? "diff" : ""}"><td>${DATA.cap_label[cap]}</td>` +
+      cells.map(c => `<td style="color:var(--${c.support === "yes" ? "yes" : c.support === "partial" ? "partial" : c.support === "no" ? "no" : "unknown"})">${SYM[c.support]}</td>`).join("") +
+      "</tr>";
+  }).join("") + "</tbody>";
+  tbl.innerHTML = head + body;
+}
+document.getElementById("grid").addEventListener("click", e => {
+  const b = e.target.closest(".cmp");
+  if (!b) return;
+  e.stopPropagation();
+  const i = picked.indexOf(b.dataset.h);
+  if (i >= 0) picked.splice(i, 1);
+  else if (picked.length >= 4) picked.shift();
+  else picked.push(b.dataset.h);
+  document.querySelectorAll(".cmp").forEach(x =>
+    x.setAttribute("aria-pressed", picked.includes(x.dataset.h)));
+  renderCompare();
+  if (picked.length >= 2) document.getElementById("compare").scrollIntoView({ block: "nearest" });
 });
 
 let CURRENT = null;
@@ -480,6 +542,83 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") drawer.class
 
 render(DATA.harnesses);
 </script>
+</body>
+</html>
+"""
+
+METHOD_TEMPLATE = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>harness-atlas — why trust this</title>
+<meta name="description" content="How every cell in the harness-atlas grid is produced, pinned, and kept honest — and what a cell is not.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>__CSS__
+.wrap { max-width: 760px; }
+main.prose { padding: 20px 0 60px; }
+main.prose h2 {
+  font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 620;
+  font-size: 30px; margin: 40px 0 10px;
+}
+main.prose p, main.prose li { color: var(--muted); max-width: 70ch; }
+main.prose b { color: var(--ink); }
+main.prose a { color: var(--accent); }
+main.prose ol { padding-left: 22px; }
+main.prose li { margin: 8px 0; }
+main.prose code { color: var(--accent2); }
+.pull {
+  border-left: 2px solid var(--accent); background: var(--panel);
+  padding: 14px 18px; margin: 22px 0; font-family: Fraunces, Georgia, serif;
+  font-style: italic; font-size: 17px; color: var(--ink); max-width: 60ch;
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="eyebrow"><a href="./" style="color:inherit;text-decoration:none">← harness-atlas</a> · method</p>
+  <h1>Why trust <em>this</em> grid.</h1>
+  <p class="lede">Every capability comparison of coding agents ages in weeks, and most are written from memory. This one inverts the process: researchers fetch official docs during the run, and no verdict enters the grid without the URL and the verbatim sentence it was read from.</p>
+  <div class="chips">
+    <span class="chip">snapshot <b>__AS_OF__</b></span>
+    <span class="chip">release <b>__VERSION__</b></span>
+    <span class="chip"><b>__N__</b> harnesses · 14 capabilities</span>
+  </div>
+</header>
+<main class="wrap prose">
+  <h2>The evidence contract</h2>
+  <p>A cell in the grid is not an opinion. It is a record that, on the snapshot date, a named document page stated something specific. Four things travel with every verdict:</p>
+  <ol>
+    <li><b>The primary source.</b> The vendor's own documentation. Blogs, aggregators and press releases are never the citation for a cell.</li>
+    <li><b>A verbatim quote.</b> The sentence the verdict was read from, kept in the research journal behind each page. Paraphrase is for notes; the quote is the contract.</li>
+    <li><b>A version pin.</b> Open repos pin a release tag you can check out. Closed-source products pin whatever the vendor publishes — an npm dist-tag, a changelog page, an API self-label — and the row <i>says which</i>, because a pin you cannot diff is weaker evidence and should look weaker.</li>
+    <li><b><code>unknown</code> over a guess.</b> If no fetched page answers the question, the cell is <code>?</code>. Absence of evidence, recorded as such.</li>
+  </ol>
+  <div class="pull">A cell you cannot trace does not exist here.</div>
+
+  <h2>What a cell is — and is not</h2>
+  <p><b>It is:</b> "on this date, this doc page described this capability." <code>●</code> means described; <code>◐</code> means described <i>with a stated limitation</i>, and the note names it; <code>○</code> means the doc states the absence; <code>?</code> means nobody fetched a page that answers.</p>
+  <p><b>It is not:</b> a quality rating, a recommendation, or a version-free truth. A <code>●</code> on sandboxing says the doc describes a sandbox — whether it holds is <a href="https://github.com/Orvii/harness-atlas/blob/main/TRUST.md">TRUST.md</a>'s layer analysis plus your own judgment. Gates (flags, tiers, OS limits, maturity labels, deprecations) live in <a href="https://github.com/Orvii/harness-atlas/blob/main/GATES.md">GATES.md</a>, because a matrix of five-valued cells would be unreadable and the notes are where the truth fits.</p>
+
+  <h2>How a row is produced</h2>
+  <ol>
+    <li>One researcher per harness fetches the official docs live and returns a structured record: verdicts with URLs and quotes, a version pin with its source, and five deep sections (architecture, context management, ecosystem, governance, limitations).</li>
+    <li>Records land in a journal; a mechanical generator (<code>scripts/generate.py</code>) compiles journals into pages and the matrix. Prose is sanitized at load time so internal research framing can never reach a published page.</li>
+    <li>Nothing is hand-edited after generation. A correction means re-running the research, not patching a cell.</li>
+  </ol>
+
+  <h2>What happens when a vendor ships</h2>
+  <p>Vendors ship weekly; the grid does not move between research runs — by design. Instead, CI runs <code>drift-check.sh</code> monthly: every pin compared against the current release (or reported as not-diffable for closed-source rows), and the result committed to <a href="https://github.com/Orvii/harness-atlas/blob/main/reports/drift-log.md">reports/drift-log.md</a>. A link-rot checker separates dead evidence URLs from blocked ones. Drift is a research task, never a silent edit: the log is the honest distance between the snapshot and today.</p>
+
+  <h2>Audit us</h2>
+  <p>The whole point is that a stranger can check any cell in five minutes with nothing but the page and the URL it cites. <a href="https://github.com/Orvii/harness-atlas/blob/main/VERIFYING.md">VERIFYING.md</a> is the procedure, and the <a href="https://github.com/Orvii/harness-atlas/issues/new/choose">issue templates</a> are the door: a correction report must carry the doc URL and the verbatim contradicting sentence. Disagreements about interpretation are welcome too — the note column should argue with itself in the open.</p>
+  <p>Cite the release, not the date: cells move as vendors ship. <code>__VERSION__</code> is the current one.</p>
+</main>
+<footer class="wrap">
+  <p>Orvii — Open, Research, Vision, Innovation &amp; Ideas. <a href="https://github.com/Orvii/harness-atlas">source</a> · <a href="https://github.com/Orvii/harness-atlas/blob/main/METHODOLOGY.md">METHODOLOGY.md</a> · <a href="./">the grid</a></p>
+</footer>
 </body>
 </html>
 """
