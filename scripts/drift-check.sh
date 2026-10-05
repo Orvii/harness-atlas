@@ -19,7 +19,7 @@ for line in open("matrix.yaml"):
         repos[cur] = m.group(1)
         cur = None
 
-CLOSED = re.compile(r"closed source|not public|no public", re.I)
+CLOSED = re.compile(r"closed[- ]source|not public|no public", re.I)
 
 drift = 0
 closed = 0

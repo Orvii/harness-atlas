@@ -6,6 +6,18 @@
 - `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates
 - README "How to read a cell" — partial is a verdict with a note; unknown is absence of evidence
 
+## [2026-10-05] - v3.3: twenty-five harnesses — the cloud-autonomous cluster
+
+### Added
+- `harnesses/cursor.md`, `windsurf.md`, `google-jules.md`, `amazon-kiro.md`, `devin.md` — five closed-source agents incl. the first three whose loop runs server-side (Jules, Devin, Kiro cloud sessions). Version pins from npm dist-tags, vendor changelogs and API self-labels; each row says which.
+- `SYNTHESIS.md` §9 "Execution locality is now a first-class axis" — the human gate relocates when the loop leaves the machine (Jules: plan approval instead of prompts; Windsurf/Devin: fail-closed sandbox); where the human left, a model was hired (Cursor Auto-review default, Jules' critic agent); `background_tasks` was conflating async with remote.
+- `SYNTHESIS.md` §6 retitled: the compatibility chain no longer has one direction — v3.3 rows cross-read Claude/Codex/Cursor directories.
+- `TRUST.md` five rows; prompts-floor now has two exceptions (Amp by choice, Jules by structure); cloud rows are VM-isolated by construction while local sandboxes stay opt-in.
+- `GATES.md` seventh gate kind (locality) plus the new env/tier/OS/maturity/deprecation entries.
+
+### Modified
+- Counts to twenty-five across README, hero.svg, SYNTHESIS, TRUST, CITATION (v3.3).
+
 ## [2026-10-05] - v3.2: twenty harnesses — the closed-source cluster
 
 ### Added
