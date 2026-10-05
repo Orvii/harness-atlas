@@ -89,6 +89,21 @@ def load_pages():
                 head[key] = m.group(1).strip()
         m = re.search(r"^## What it promises\n\n(.+)$", t, re.M)
         head["promises"] = m.group(1).strip() if m else ""
+        # deep sections: the prose behind the grid (architecture, governance, …)
+        sections = {}
+        for sec in ("Architecture", "Context management", "Ecosystem",
+                    "Governance", "Limitations"):
+            m = re.search(rf"^## {re.escape(sec)}\n\n(.+?)(?=\n## |\Z)", t, re.M | re.S)
+            if m:
+                sections[sec.lower().replace(" ", "_")] = m.group(1).strip()
+        quotes = []
+        qm = re.search(r"^## In its own words\n\n(.+?)(?=\n## |\Z)", t, re.M | re.S)
+        if qm:
+            for line in qm.group(1).splitlines():
+                s = line.strip()
+                # skip attribution lines ("> — [url](url)") and md line breaks
+                if s.startswith(">") and not s.startswith("> —"):
+                    quotes.append(s.lstrip("> ").rstrip())
         rows = {}
         for line in t.splitlines():
             if line.startswith("| ") and not line.startswith("| capability") and not line.startswith("|---"):
@@ -101,7 +116,8 @@ def load_pages():
                     m = re.search(r"\]\((https?://[^)]+)\)", cells[3]) or \
                         re.search(r"(https?://\S+)", cells[3])
                     rows[cells[0]] = {"note": cells[2], "evidence": m.group(1).rstrip(")") if m else None}
-        pages[p.stem] = {"head": head, "rows": rows}
+        pages[p.stem] = {"head": head, "rows": rows,
+                         "sections": sections, "quotes": quotes}
     return pages
 
 
@@ -130,6 +146,8 @@ def main():
             "docs": pg["head"].get("docs home", ""),
             "promises": pg["head"].get("promises", ""),
             "caps": caps,
+            "sections": pg.get("sections", {}),
+            "quotes": pg.get("quotes", []),
         })
 
     as_of = re.search(r"^as_of: \"?(\d{4}-\d{2}-\d{2})\"?",
@@ -144,7 +162,7 @@ def main():
     SITE.mkdir(exist_ok=True)
     (SITE / "index.html").write_text(html)
     (SITE / ".nojekyll").write_text("")
-    print(f"wrote site/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
+    print(f"wrote {SITE.relative_to(ROOT)}/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
     missing = sum(1 for h in harnesses for c in h["caps"] if c["support"] != "unknown" and not c["evidence"])
     if missing:
         print(f"WARNING: {missing} non-unknown cells have no evidence URL in their page")
@@ -279,6 +297,24 @@ td.hot { background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .drawer .meta { margin-top: 14px; display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; }
 .drawer .meta a { color: var(--accent); }
 .drawer .meta .verdict { color: var(--ink); font-weight: 600; }
+.drawer .tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.drawer .tabs button {
+  background: transparent; border: 1px solid var(--line); color: var(--muted);
+  border-radius: 999px; padding: 5px 14px; cursor: pointer; font: inherit; font-size: 12px;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.drawer .tabs button[aria-selected="true"] {
+  background: var(--accent); border-color: var(--accent); color: #0b0806; font-weight: 600;
+}
+.drawer h3 {
+  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent2); margin: 18px 0 6px; font-weight: 600;
+}
+.drawer blockquote {
+  margin: 10px 0; padding: 10px 16px; border-left: 2px solid var(--accent);
+  background: var(--panel2); color: var(--ink); font-family: Fraunces, Georgia, serif;
+  font-style: italic; font-size: 15px;
+}
 .drawer button.close {
   position: absolute; top: 14px; right: 20px; background: transparent;
   border: 1px solid var(--line); color: var(--muted); border-radius: 6px;
@@ -325,10 +361,22 @@ footer p { max-width: 80ch; }
 <div class="drawer" id="drawer" role="dialog" aria-modal="false" aria-labelledby="d-title">
   <div class="wrap">
     <button class="close" id="d-close" aria-label="Close evidence drawer">esc ✕</button>
-    <h2 id="d-title"></h2>
-    <p class="sub" id="d-sub"></p>
-    <p class="note" id="d-note"></p>
-    <div class="meta" id="d-meta"></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-cell" role="tab" aria-selected="true">cell evidence</button>
+      <button id="tab-deep" role="tab" aria-selected="false">this harness, in depth</button>
+    </div>
+    <div id="pane-cell">
+      <h2 id="d-title"></h2>
+      <p class="sub" id="d-sub"></p>
+      <p class="note" id="d-note"></p>
+      <div class="meta" id="d-meta"></div>
+    </div>
+    <div id="pane-deep" hidden>
+      <h2 id="d-title2"></h2>
+      <p class="sub" id="d-sub2"></p>
+      <div id="d-sections"></div>
+      <div id="d-quotes"></div>
+    </div>
   </div>
 </div>
 
@@ -383,11 +431,37 @@ document.getElementById("q").addEventListener("input", e => {
   render(DATA.harnesses.filter(h => h.name.toLowerCase().includes(q)));
 });
 
+let CURRENT = null;
+function showTab(which) {
+  const cell = which === "cell";
+  document.getElementById("tab-cell").setAttribute("aria-selected", cell);
+  document.getElementById("tab-deep").setAttribute("aria-selected", !cell);
+  document.getElementById("pane-cell").hidden = !cell;
+  document.getElementById("pane-deep").hidden = cell;
+}
+document.getElementById("tab-cell").addEventListener("click", () => showTab("cell"));
+document.getElementById("tab-deep").addEventListener("click", () => showTab("deep"));
+
+function renderDeep(h) {
+  document.getElementById("d-title2").textContent = h.name;
+  document.getElementById("d-sub2").textContent = "version pin: " + h.version.slice(0, 90);
+  const order = ["architecture", "context_management", "ecosystem", "governance", "limitations"];
+  const label = { architecture: "architecture", context_management: "context management",
+                  ecosystem: "ecosystem", governance: "governance", limitations: "limitations" };
+  document.getElementById("d-sections").innerHTML = order.filter(k => h.sections[k]).map(k =>
+    `<h3>${label[k]}</h3><p>${esc(h.sections[k])}</p>`).join("") ||
+    "<p>No deep sections recorded for this harness.</p>";
+  document.getElementById("d-quotes").innerHTML = h.quotes.length
+    ? "<h3>in its own words</h3>" + h.quotes.map(q => `<blockquote>${esc(q)}</blockquote>`).join("")
+    : "";
+}
+
 grid.addEventListener("click", e => {
   const b = e.target.closest(".cell");
   if (!b) return;
   const h = DATA.harnesses.find(x => x.id === b.dataset.h);
   const c = h.caps.find(x => x.cap === b.dataset.c);
+  CURRENT = h;
   document.getElementById("d-title").textContent = h.name + " · " + DATA.cap_label[c.cap];
   document.getElementById("d-sub").textContent = SYM[c.support] + " " + WORD[c.support] + " · as of " + DATA.as_of;
   document.getElementById("d-note").textContent = c.note || "No note recorded for this cell — see the harness page.";
@@ -396,6 +470,8 @@ grid.addEventListener("click", e => {
     (c.evidence ? `<span>read from: <a href="${esc(c.evidence)}" rel="noopener noreferrer">${esc(c.evidence.replace(/^https?:\/\//, "").slice(0, 64))}</a></span>` : "<span>no evidence URL recorded — see page</span>") +
     `<span>pin: <span class="verdict">${esc(h.version.slice(0, 72))}</span></span>` +
     (h.docs ? `<span><a href="${esc(h.docs)}" rel="noopener noreferrer">docs home</a></span>` : "");
+  renderDeep(h);
+  showTab("cell");
   drawer.classList.add("open");
   document.getElementById("d-close").focus();
 });
