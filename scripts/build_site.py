@@ -558,7 +558,7 @@ METHOD_TEMPLATE = r"""<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>__CSS__
 .wrap { max-width: 760px; }
-main.prose { padding: 20px 0 60px; }
+main.prose { padding: 20px 28px 60px; }
 main.prose h2 {
   font-family: Fraunces, Georgia, serif; font-style: italic; font-weight: 620;
   font-size: 30px; margin: 40px 0 10px;
