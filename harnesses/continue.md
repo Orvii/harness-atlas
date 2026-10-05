@@ -2,7 +2,7 @@
 
 - **repo:** continuedev/continue
 - **version pin:** `v2.0.0-vscode` — gh api repos/continuedev/continue/releases/latest -> v2.0.0-vscode (published 2026-06-19); README calls it the "Final 2.0.0 Release" of VS Code extension, CLI, and JetBrains plugin. Tag v2.1.0-vscode also exists but is flagged prerelease; VS Code Marketplace lists extension 2.1.0; npm @continuedev/cli latest = 1.5.47.
-- **docs home:** https://docs.continue.dev (the task's https://continue.dev/docs/intro returns HTTP 404; docs.continue.dev root returns 200 "What is Continue?")
+- **docs home:** https://docs.continue.dev (the https://continue.dev/docs/intro returns HTTP 404; docs.continue.dev root returns 200 "What is Continue?")
 
 ## What it promises
 
@@ -45,7 +45,7 @@ License Apache-2.0; README footer: "Apache 2.0 © 2023-2026 Continue Dev, Inc." 
 
 ## Limitations
 
-The project is finished, not evolving: repo read-only, docs frozen — the task's own https://continue.dev/docs/intro returns 404, as do Mission Control cloud-workflow pages and all /hub/* pages (hub.continue.dev DNS is dead). Hooks, skills, and subagents ship in CLI code but have no documentation (cli/hooks and cli/subagents -> 404). MCP "only works in agent mode" (docs.continue.dev/reference/continue-mcp). README recommends the Continue CLI instead of the JetBrains plugin. No OS-level sandbox/container isolation is documented — only permission gating and read-only plan mode. Cost controls report usage but document no limits. Chat, edit, and autocomplete tool availability depends on the selected model/provider.
+The project is finished, not evolving: repo read-only, docs frozen — the https://continue.dev/docs/intro returns 404, as do Mission Control cloud-workflow pages and all /hub/* pages (hub.continue.dev DNS is dead). Hooks, skills, and subagents ship in CLI code but have no documentation (cli/hooks and cli/subagents -> 404). MCP "only works in agent mode" (docs.continue.dev/reference/continue-mcp). README recommends the Continue CLI instead of the JetBrains plugin. No OS-level sandbox/container isolation is documented — only permission gating and read-only plan mode. Cost controls report usage but document no limits. Chat, edit, and autocomplete tool availability depends on the selected model/provider.
 
 ## In its own words
 
@@ -82,18 +82,21 @@ Despite a read-only repo, a dead Hub domain, and docs frozen at the final 2.0.0 
 - e
 - d
 -  
-- t
-- h
+- d
+- u
+- r
 - i
-- s
+- n
+- g
 -  
-- s
+- r
 - e
 - s
-- s
-- i
-- o
-- n
+- e
+- a
+- r
+- c
+- h
 - ,
 -  
 - H
@@ -1994,15 +1997,19 @@ Despite a read-only repo, a dead Hub domain, and docs frozen at the final 2.0.0 
 -  
 - t
 - h
-- i
-- s
+- e
 -  
-- s
+- r
 - e
 - s
-- s
-- i
-- o
+- e
+- a
+- r
+- c
+- h
+-  
+- r
+- u
 - n
 - ,
 -  

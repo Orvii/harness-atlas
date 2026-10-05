@@ -19,11 +19,21 @@ for line in open("matrix.yaml"):
         repos[cur] = m.group(1)
         cur = None
 
+CLOSED = re.compile(r"closed source|not public|no public", re.I)
+
 drift = 0
+closed = 0
 for repo, pin in sorted(repos.items()):
     path = repo.split(" (")[0].strip()
     path = re.sub(r"^https://github\.com/", "", path).rstrip("/")
     pin = pin.split(" (")[0].strip()
+    # Closed-source products have no public repo to diff against: their pin comes
+    # from an npm dist-tag or a vendor changelog page. Report as uncheckable here
+    # rather than as a missing release, which would read like a rename.
+    if CLOSED.search(repo):
+        closed += 1
+        print(f"—  {path or repo.split(' (')[0]}: pin {pin} — closed source, docs/registry-pinned (not diffable)")
+        continue
     if "/" not in path:
         continue
     try:
@@ -54,5 +64,6 @@ for repo, pin in sorted(repos.items()):
         print(f"Δ  {path}: pinned {pin} → latest {out}")
     else:
         print(f"=  {path}: {pin}")
-print(f"\n{drift} drifted pin(s). Refresh = new research run + generate.py; see CONTRIBUTING.")
+print(f"\n{drift} drifted pin(s), {closed} closed-source pin(s) not diffable. "
+      f"Refresh = new research run + generate.py; see CONTRIBUTING.")
 PY

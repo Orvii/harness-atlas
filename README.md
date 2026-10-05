@@ -7,7 +7,7 @@
 
 What AI coding harnesses **promise** — and what they **support** — with a version pin and a fetched-doc citation on every cell.
 
-Seventeen harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
+Twenty harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 
 | | |
 |---|---|
@@ -32,6 +32,8 @@ If you only read one file, read [SYNTHESIS.md](SYNTHESIS.md). Short version: the
 ✅ documented yes · ◐ partial (read the note) · ✗ documented no · ? unknown/unverified
 
 ## How to read a cell
+
+One column needs a caveat: `sandboxing` in this grid asks *does the harness bound the agent by any mechanism*, so permission prompts count. [TRUST.md](TRUST.md) separates the layers and is the stricter read — a harness can be `sandboxing ✅` here with no OS-level sandbox there. For a security decision, read TRUST.md, not this cell.
 
 Take `sandboxing ◐` on some row. It means: on the cited date, the cited doc page documented sandboxing **with a stated limitation** — and the note in that row's capability table says which limitation (off by default, platform-restricted, experimental). `◐` is never a hedge: the note is the verdict's second half. A `?` means the researcher could not fetch a page that answers the question — absence of evidence, recorded as such, never guessed.
 

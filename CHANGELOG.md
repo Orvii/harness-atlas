@@ -6,6 +6,21 @@
 - `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates
 - README "How to read a cell" — partial is a verdict with a note; unknown is absence of evidence
 
+## [2026-10-05] - v3.2: twenty harnesses — the closed-source cluster
+
+### Added
+- `harnesses/sourcegraph-amp.md`, `harnesses/factory-droid.md`, `harnesses/jetbrains-junie.md` — three closed-source commercial agents, researched from vendor docs with the same evidence contract (per-cell URL + verbatim quote). Version pins come from npm `dist-tag latest`, the vendor changelog page, and the vendor what's-new page respectively, since no release tags exist; each row says which.
+- `SYNTHESIS.md` §8 "The closed-source cluster answers differently" — what changes when a pin is not a git tag, when deprecation is a policy rather than a commit, and when a trust claim is a vendor security page.
+- `GATES.md` "A sixth kind: the closed-source gate" plus the new harnesses' env/tier/OS/maturity/deprecation gates in the existing five lists.
+- `TRUST.md` rows for all three, including **Sourcegraph Amp as the first harness in the set that documents no local permission prompt at all** ("By default, Amp does not ask for approval before running tools") — the universal-prompt floor now has one hole.
+- `bench-notes`: `the-benchmark-code-is-the-result` (note 14). `equivalence-notes`: `environment-is-part-of-the-program` (note 11).
+
+### Modified
+- Counts to twenty across `README.md`, `hero.svg`, `SYNTHESIS.md`, `TRUST.md`, `CITATION.cff`.
+- `TRUST.md` analysis bullets rewritten against the enlarged table: prompts 19/20, no-OS-sandbox 8/20, partial 4/20.
+- `README.md` "How to read a cell" and `TRUST.md` intro now state the `sandboxing` definitional gap explicitly — the matrix cell counts permission gating, TRUST separates the layers, and where they disagree TRUST is the one to use for a security decision (OpenCode and Cline are the concrete cases).
+- Stripped internal-process phrasing ("task-provided", "the task's") from `harnesses/sourcegraph-amp.md`, `harnesses/continue.md`, `harnesses/vibe.md` — the dead-URL findings stay, described as legacy/canonical paths instead.
+
 ## [2026-10-05] - v3: 17 harnesses, deep sections, trust + precedence + citation
 
 ### Added

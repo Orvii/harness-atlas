@@ -1,6 +1,6 @@
 # Synthesis — what the matrix actually says
 
-As of 2026-10-05 (v3: 17 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
+As of 2026-10-05 (v3.2: 20 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
 
 ## 1. The capability floor has moved
 
@@ -48,11 +48,20 @@ The practical consequence: writing a skill or memory file to Claude Code's layou
 
 ## 7. Governance is now a differentiator — and a mirror
 
-Three governance facts from v2 deserve attention:
+Four governance facts deserve attention:
 
 - **Zed**'s CONTRIBUTING.md states it does "not accept contributions from autonomous agents" and bans undisclosed LLM-written PR discussion — the strictest stance in the set, from a product built around agentic coding.
 - **Kilo Code** was acquired by Anaconda while deprecating its signature Orchestrator mode; corporate ownership reshaping roadmaps is now visible inside capability tables.
 - **Continue** is finished: read-only repo, frozen docs, dead Hub domain — yet its last release quietly carries the compatibility layer §6 describes.
 - **Amazon Q Developer CLI** inverts the pattern: a discontinued open-source CLI whose last releases hid a power-user arsenal (blocking preToolUse hooks, delegate subagents, an agent-scoped semantic knowledge base) behind `/experiment` toggles — capability that shipped to no audience.
+
+## 8. The closed-source cluster answers differently
+
+The v3.2 additions — **Sourcegraph Amp**, **Factory Droid**, **JetBrains Junie** — share one property no earlier row had: none has a public product repo. That changes what a capability cell can mean.
+
+- **Version pins move off release tags.** For open harnesses a pin is a git tag you can check out. For these three it is whatever the vendor publishes: Amp from the npm `dist-tag latest` of `@sourcegraph/amp`, Droid from its docs changelog page, Junie from `junie.jetbrains.com/whats-new`. A pin you cannot diff is weaker evidence, and the atlas says so per row instead of hiding it.
+- **Deprecation is a policy, not a signal.** Amp states an explicit "no backward compatibility" posture and deletes unloved features (Amp Tab, custom commands replaced by skills). In an open repo that deletion is a commit you can read; here it is a chronicle post. Cells for fast-moving closed products should be treated as shorter-lived than identical-looking cells for open ones.
+- **Trust claims concentrate in the vendor's own security page.** Droid documents a real OS sandbox (Seatbelt on macOS, bubblewrap+seccomp on Linux/WSL2, egress through a filtering proxy); Amp documents sandboxed cloud VMs for orbs while leaving local execution unsandboxed and unapproved by default. Both are vendor assertions with no source to audit — which is exactly the distinction [TRUST.md](TRUST.md) exists to make visible.
+- **Capability depth is not lower, only unverifiable.** These three rows are among the fullest in the grid (Droid 13 ✅ + 1 ◐; Junie 13 ✅ + 1 ◐). The honest reading is not "closed means less capable" but "closed means every ✅ rests on a doc page rather than on code you can run."
 
 A mirror, stated plainly: this atlas is itself agent-assisted research. We hold the line where Zed draws it for *contributions* — every cell cites a human-checkable source URL, and the prose is reviewable line by line. Governance rows exist so readers can apply their own line wherever they draw it.

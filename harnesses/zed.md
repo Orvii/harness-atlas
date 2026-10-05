@@ -68,7 +68,7 @@ A product built around agentic coding explicitly "don't accept contributions fro
 
 ## Sources fetched
 
-- F
+- f
 - e
 - t
 - c
@@ -76,18 +76,21 @@ A product built around agentic coding explicitly "don't accept contributions fro
 - e
 - d
 -  
-- t
-- h
+- d
+- u
+- r
 - i
-- s
+- n
+- g
 -  
-- s
+- r
 - e
 - s
-- s
-- i
-- o
-- n
+- e
+- a
+- r
+- c
+- h
 -  
 - (
 - d

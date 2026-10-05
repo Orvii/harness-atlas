@@ -37,6 +37,44 @@ def slug(name: str) -> str:
 
 DEEP_FIELDS = ("architecture", "context_mgmt", "ecosystem", "governance", "limitations", "quotes", "docs_map")
 
+# Researcher prose is written for the orchestrator, not for publication: it refers
+# to "the task", "this session", "the prompt". The findings stay; the framing that
+# only makes sense inside a research run does not. Applied at load time so a
+# regenerate can never reintroduce it.
+LEAK_SUBS = [
+    (r"\bthe task-provided\b", "the legacy"),
+    (r"\btask-provided\b", "legacy"),
+    (r"\bthe task-referenced\b", "the"),
+    (r"\btask-referenced\b", ""),
+    (r"\bthe task's own\b", "the"),
+    (r"\bthe task's\b", "the"),
+    (r"\bthe task pointed at\b", "the shorter path"),
+    (r"\bthe task-provided docs URL\b", "the legacy docs URL"),
+    (r"\bchecked this session\b", "checked during research"),
+    (r"\bfetched this session\b", "fetched during research"),
+    (r"\bverified dead this session\b", "verified dead during research"),
+    (r"\bthis session\b", "the research run"),
+    # NOTE: no "the prompt" rule. It collides with real technical terms
+    # (prompt cache, prompt engineering, system prompt) and silently rewrites
+    # them. The task/session leaks above are the ones worth catching.
+]
+
+
+def sanitize(text):
+    """Strip internal-process framing from researcher prose, recursively."""
+    if isinstance(text, str):
+        for pat, rep in LEAK_SUBS:
+            text = re.sub(pat, rep, text, flags=re.I)
+        # collapse horizontal runs only — `\s` would eat the \n\n that markdown
+        # paragraphs live on; keep line structure intact.
+        text = re.sub(r"[ \t]{2,}", " ", text)
+        return text.replace(" )", ")").replace("( ", "(").strip()
+    if isinstance(text, list):
+        return [sanitize(v) for v in text]
+    if isinstance(text, dict):
+        return {k: sanitize(v) for k, v in text.items()}
+    return text
+
 
 def load(journals: list) -> list:
     merged = {}
@@ -48,6 +86,7 @@ def load(journals: list) -> list:
             r = m.get("result")
             if m.get("type") != "result" or not isinstance(r, dict) or "harness" not in r:
                 continue
+            r = sanitize(r)
             key = slug(r["harness"])
             cur = merged.setdefault(key, {"harness": r["harness"], "features": []})
             for field in ("repo", "version", "version_source", "docs_home", "promises", "surprises"):

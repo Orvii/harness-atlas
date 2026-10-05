@@ -1,6 +1,6 @@
 # Vibe
 
-- **repo:** mistralai/mistral-vibe (the task-referenced github.com/mistralai/vibe returns 404; canonical repo is mistralai/mistral-vibe, description "Minimal CLI coding agent by Mistral")
+- **repo:** mistralai/mistral-vibe (the github.com/mistralai/vibe returns 404; canonical repo is mistralai/mistral-vibe, description "Minimal CLI coding agent by Mistral")
 - **version pin:** `v2.25.8` — GitHub latest release tag via gh api repos/mistralai/mistral-vibe/releases/latest (tag v2.25.8, published 2026-09-23T15:10:39Z); cross-checked against PyPI registry mistral-vibe 2.25.8 (https://pypi.org/pypi/mistral-vibe/json)
 - **docs home:** https://github.com/mistralai/mistral-vibe#readme (docs/README.md states: "For basic setup, see the main README"; in-repo docs live under /docs plus 17 ADRs under /docs/adr — there is no standalone docs website)
 
@@ -45,7 +45,7 @@ Owned by Mistral AI (GitHub org `mistralai`), Apache-2.0 license, repo created 2
 
 ## Limitations
 
-README warns Vibe "works on Windows, but we officially support and target UNIX environments." No OS-level sandbox: protected-path interception is "a heuristic, not a boundary ... only an OS sandbox can make that a guarantee"; enforcement is permission prompts, trust folders and shell-command analysis. Subagents cannot spawn subagents (depth limit 1). Foreign plugin packages are capped at skills and MCP — hooks/knowledge/agents/libraries/connectors are native-only, executable plugin code is refused, and plugin support is an optional backend capability (ADR 0007). Custom tools will be deprecated in favor of skills. Docs are in-repo only (README + docs/ + ADRs); the task-referenced github.com/mistralai/vibe 404s — canonical repo is mistralai/mistral-vibe. Telemetry is on by default (opt-out via enable_telemetry); voice mode and several harness features sit behind experimental flags.
+README warns Vibe "works on Windows, but we officially support and target UNIX environments." No OS-level sandbox: protected-path interception is "a heuristic, not a boundary ... only an OS sandbox can make that a guarantee"; enforcement is permission prompts, trust folders and shell-command analysis. Subagents cannot spawn subagents (depth limit 1). Foreign plugin packages are capped at skills and MCP — hooks/knowledge/agents/libraries/connectors are native-only, executable plugin code is refused, and plugin support is an optional backend capability (ADR 0007). Custom tools will be deprecated in favor of skills. Docs are in-repo only (README + docs/ + ADRs); the github.com/mistralai/vibe 404s — canonical repo is mistralai/mistral-vibe. Telemetry is on by default (opt-out via enable_telemetry); voice mode and several harness features sit behind experimental flags.
 
 ## In its own words
 
@@ -64,7 +64,7 @@ README warns Vibe "works on Windows, but we officially support and target UNIX e
 
 ## Notable
 
-Despite being a Mistral-branded CLI, Vibe ships OpenAI, OpenAI-responses, Anthropic and Vertex-Anthropic API adapters, imports Claude Code / Codex / Kimi / OpenCode plugin packages, and is migrating to a replay-deterministic Rust "Unified Harness" whose TypeScript sandbox runs orchestration code with recorded time and randomness — and the repo the task pointed at (github.com/mistralai/vibe) does not exist; the real one is mistralai/mistral-vibe.
+Despite being a Mistral-branded CLI, Vibe ships OpenAI, OpenAI-responses, Anthropic and Vertex-Anthropic API adapters, imports Claude Code / Codex / Kimi / OpenCode plugin packages, and is migrating to a replay-deterministic Rust "Unified Harness" whose TypeScript sandbox runs orchestration code with recorded time and randomness — and the repo the shorter path (github.com/mistralai/vibe) does not exist; the real one is mistralai/mistral-vibe.
 
 ## Sources fetched
 
