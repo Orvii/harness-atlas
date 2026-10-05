@@ -1,0 +1,50 @@
+name: Stale or wrong cell
+description: A capability verdict, version pin, or quote no longer matches the vendor docs
+title: "stale cell: <harness> · <capability>"
+labels: [correction]
+body:
+  - type: input
+    id: harness
+    attributes:
+      label: Harness
+      placeholder: e.g. Cursor
+    validations:
+      required: true
+  - type: input
+    id: capability
+    attributes:
+      label: Capability
+      placeholder: e.g. sandboxing
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Atlas release you checked
+      description: The release tag or snapshot date you read (see the badge row or CITATION.cff)
+      placeholder: e.g. v3.3 / 2026-10-05
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What the atlas says
+      description: The verdict and note as published, plus the evidence URL it cites
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What the docs say now
+      description: The current doc page URL and a verbatim quote of the sentence that contradicts the cell
+    validations:
+      required: true
+  - type: checkboxes
+    id: checked
+    attributes:
+      label: Before submitting
+      options:
+        - label: The URL I quote is the vendor's official documentation (not a blog or changelog aggregator)
+          required: true
+        - label: I checked whether this is a version-pin drift (the vendor shipped) rather than an atlas transcription error
+          required: true

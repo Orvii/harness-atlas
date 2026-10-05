@@ -1,0 +1,39 @@
+name: Add a harness
+description: Request a row for a coding agent the atlas does not cover yet
+title: "add harness: <name>"
+labels: [new-harness]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Harness name
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Official documentation home
+      description: The vendor docs URL a researcher should start from
+    validations:
+      required: true
+  - type: input
+    id: repo
+    attributes:
+      label: Public repo (if any)
+      description: Leave blank for closed-source products — the atlas pins those from npm dist-tags or vendor changelogs and says so
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it belongs in the atlas
+      description: What this row would add that the existing 25 do not show (a capability, an execution model, a governance stance)
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This is a coding agent / harness, not a model or a generic LLM API
+          required: true
+        - label: Its docs are public and fetchable without an account
+          required: true

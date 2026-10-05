@@ -5,6 +5,11 @@
 
 # harness-atlas
 
+[![release](https://img.shields.io/github/v/release/Orvii/harness-atlas?color=FE9106&label=release&style=flat-square)](https://github.com/Orvii/harness-atlas/releases)
+[![snapshot](https://img.shields.io/badge/snapshot-2026--10--05-FEAF12?style=flat-square)](https://github.com/Orvii/harness-atlas/blob/main/matrix.yaml)
+[![drift CI](https://img.shields.io/github/actions/workflow/status/Orvii/harness-atlas/drift.yml?style=flat-square&label=drift%20CI)](https://github.com/Orvii/harness-atlas/actions/workflows/drift.yml)
+[![site](https://img.shields.io/badge/site-live-F05F03?style=flat-square)](https://orvii.github.io/harness-atlas/)
+
 What AI coding harnesses **promise** — and what they **support** — with a version pin and a fetched-doc citation on every cell.
 
 Twenty-five harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
@@ -18,6 +23,7 @@ Twenty-five harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 | [METHODOLOGY.md](METHODOLOGY.md) | how cells are produced and how to re-run |
 | [TRUST.md](TRUST.md) | the three trust layers (OS sandbox, prompts, model review) and who defaults to what |
 | [GATES.md](GATES.md) | flags, tiers, OS limits, maturity labels and deprecations behind each ✅ |
+| [VERIFYING.md](VERIFYING.md) | how to audit any cell in five minutes, and what a cell is not |
 
 ## Why this exists
 
