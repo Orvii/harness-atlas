@@ -16,6 +16,7 @@ Seventeen harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 | [harnesses/](harnesses/) | one page per harness: promises, capability table with evidence links, notable findings |
 | [SYNTHESIS.md](SYNTHESIS.md) | what the grid actually says — interop, transitions, trust models |
 | [METHODOLOGY.md](METHODOLOGY.md) | how cells are produced and how to re-run |
+| [TRUST.md](TRUST.md) | the three trust layers (OS sandbox, prompts, model review) and who defaults to what |
 
 ## Why this exists
 
