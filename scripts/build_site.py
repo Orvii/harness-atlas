@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = ROOT / "site"
+SITE = ROOT / "docs"
 
 CAPS = [
     "subagents", "workflow_orchestration", "mcp", "hooks_lifecycle", "skills",
