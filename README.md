@@ -7,7 +7,7 @@
 
 What AI coding harnesses **promise** — and what they **support** — with a version pin and a fetched-doc citation on every cell.
 
-Ten harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
+Fourteen harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 
 | | |
 |---|---|

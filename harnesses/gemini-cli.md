@@ -27,6 +27,100 @@ An open-source AI agent that brings Gemini models directly into your terminal - 
 | session_resume | ✅ yes | gemini --resume/-r [latest\|index] and interactive session browser; sessions auto-saved per project under ~/.gemini/tmp. Also /rewind (chat and/or code revert) and optional checkpointing with /restore. | [src](https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/session-management.md) |
 | cost_controls | ✅ yes | /stats session\|model\|tools reports tokens, duration, and quota; OpenTelemetry telemetry exports usage metrics; documented per-auth-method quota tiers (1,000-2,000 requests/day etc.). No hard spend-cap/limit setting documented. | [src](https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/commands.md) |
 
+## Architecture
+
+TypeScript monorepo with npm workspaces: package @google/gemini-cli handles the React-based terminal UI and command parsing and is bundled into one self-contained executable, while @google/gemini-cli-core handles Gemini API requests, authentication, and local cache and is published standalone (https://github.com/google-gemini/gemini-cli/blob/main/docs/npm.md); a third package, an A2A server, appears in the release package table (docs/releases.md). Runtime is Node.js 20+ (CONTRIBUTING.md, docs/get-started/installation.mdx). Tools execute through the core package's tool registry: the model requests a tool, the CLI evaluates it against security policies, mutators such as write_file and run_shell_command require manual confirmation (docs/reference/tools.md), and shell commands run via node-pty with a child_process fallback (docs/tools/shell.md). ACP mode turns the CLI into a JSON-RPC 2.0 server over stdio for IDE clients (docs/cli/acp-mode.md).
+
+## Context management
+
+Context comes from hierarchical GEMINI.md files: a global ~/.gemini/GEMINI.md, workspace and parent-directory files, and just-in-time scans of directories touched by tools, all concatenated into every prompt (https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md). Automatic compression triggers at model.compressionThreshold, default 0.5 of context usage (docs/reference/configuration.md); /compress replaces the chat context with a summary (docs/reference/commands.md) and a PreCompress hook fires first (docs/hooks/index.md). Sessions and tool I/O auto-save to ~/.gemini/tmp/<project_hash>/chats (docs/cli/session-management.md); checkpointing snapshots files into a shadow git repo for /restore (docs/cli/checkpointing.md); /rewind reverts conversation and/or code, working across compression points (docs/cli/rewind.md). Token caching is API-key/Vertex only (docs/cli/token-caching.md), and experimental Auto Memory mines past transcripts into reviewable memory patches and skills (docs/cli/auto-memory.md).
+
+## Ecosystem
+
+Extensions package prompts, MCP servers, custom commands, themes, hooks, subagents, and Agent Skills into installable units; installs come from GitHub repository URLs (gemini extensions install) or the official gallery (https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/index.md). The gallery page fetched this session advertises "Search all 2132 extensions" (https://geminicli.com/extensions), and a publishing flow to that gallery is documented (docs/extensions/releasing.md). Beyond extensions: SKILL.md agent skills (docs/cli/skills.md), .toml custom commands, hooks, MCP servers over Stdio/SSE/Streamable HTTP (docs/tools/mcp-server.md), subagents, an ACP Agent Registry listing for Zed/JetBrains, and a VS Code Companion extension (docs/ide-integration/index.md). Official sample repositories live under the gemini-cli-extensions GitHub organization.
+
+## Governance
+
+Apache License 2.0 (https://github.com/google-gemini/gemini-cli/blob/main/LICENSE), owned by Google under the google-gemini GitHub organization. Contributions require the Google CLA and follow Google's Open Source Community Guidelines; maintainer-reserved issues carry a "🔒Maintainers only" label (CONTRIBUTING.md). Cadence: nightly daily UTC 00:00, preview weekly Tuesday UTC 23:59, stable weekly Tuesday UTC 20:00, semver-based with patch hotfixes, coordinated by a release manager; npm publishing runs through Google's Wombat Dressing Room (docs/releases.md, README.md). A May 19, 2026 Google Developers Blog post announced unification into Antigravity CLI, stopping consumer requests June 18, 2026 while enterprise licenses and paid API keys continue; latest stable, v0.61.0, shipped September 23, 2026 (docs/changelogs/latest.md).
+
+## Limitations
+
+Token caching is unavailable to OAuth users because the Code Assist API cannot create cached content (https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/token-caching.md). The FAQ forbids third-party clients piggybacking OAuth authentication, warning of suspension (docs/resources/faq.md). Requires macOS 15+, Windows 11 24H2+, or Ubuntu 20.04+, Node.js 20+, internet access, and a Code Assist supported location (docs/get-started/installation.mdx). /copy needs xclip/xsel on Linux, and interactive shell requires node-pty or it falls back to non-interactive child_process (docs/reference/commands.md, docs/tools/shell.md). Sandboxing is platform-bound: Seatbelt macOS-only, runsc Linux-only, Windows native via icacls, LXC/LXD experimental (docs/cli/sandbox.md). Plan mode, Subagents, and Remote subagents are marked 🔬 in the docs index; Auto Memory is experimental (docs/index.md, docs/cli/auto-memory.md). Consumer service ended June 18, 2026.
+
+## In its own words
+
+> Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.  
+> — [https://github.com/google-gemini/gemini-cli/blob/main/README.md](https://github.com/google-gemini/gemini-cli/blob/main/README.md)
+
+> ACP (Agent Client Protocol) mode is a special operational mode of Gemini CLI designed for programmatic control, primarily for IDE and other developer tool integrations. It uses a JSON-RPC protocol over stdio to communicate between Gemini CLI agent and a client.  
+> — [https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/acp-mode.md](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/acp-mode.md)
+
+> The CLI uses a hierarchical system to source context. It loads various context files from several locations, concatenates the contents of all found files, and sends them to the model with every prompt.  
+> — [https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md](https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md)
+
+> Gemini CLI extensions package prompts, MCP servers, custom commands, themes, hooks, sub-agents, and agent skills into a familiar and user-friendly format. With extensions, you can expand the capabilities of Gemini CLI and share those capabilities with others.  
+> — [https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/index.md](https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/index.md)
+
+
 ## Notable
 
 The official docs banner and Google Developers Blog announce that Gemini CLI was replaced by Antigravity CLI on June 18, 2026 for free, Pro, and Ultra users, yet the repo keeps shipping weekly releases (v0.62.0, Sep 29, 2026) for enterprise and API-key users - a live-but-transitioning project.
+
+## Sources fetched
+
+- https://github.com/google-gemini/gemini-cli
+- https://github.com/google-gemini/gemini-cli/blob/main/README.md
+- https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md
+- https://github.com/google-gemini/gemini-cli/blob/main/LICENSE
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/npm.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/releases.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/changelogs/latest.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/acp-mode.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/sandbox.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/session-management.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/checkpointing.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/token-caching.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/headless.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/rewind.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/plan-mode.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/auto-memory.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/skills.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/settings.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/custom-commands.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/trusted-folders.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/model.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/model-routing.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/telemetry.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/system-prompt.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/enterprise.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/git-worktrees.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/cli-reference.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/tutorials/memory-management.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/core/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/core/remote-agents.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/file-system.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/shell.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/memory.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/tools.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/policy-engine.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/memport.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/ide-integration/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/reference.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/writing-extensions.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/index.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/installation.mdx
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/authentication.mdx
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/gemini-3.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/faq.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/troubleshooting.md
+- https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md
+- https://geminicli.com/extensions
+- https://developers.googleblog.com/en/an-important-update-transitioning-gemini-cli-to-antigravity-cli

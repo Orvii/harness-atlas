@@ -1,6 +1,6 @@
 # Synthesis — what the matrix actually says
 
-As of 2026-10-05. Every claim below traces to a harness page, every harness page traces to a fetched doc.
+As of 2026-10-05 (v2: 14 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
 
 ## 1. The capability floor has moved
 
@@ -34,4 +34,23 @@ A capability matrix without version pins and dates is fiction within a quarter. 
 
 ## 5. What "dynamic workflows" actually means in the wild
 
-Scripted multi-agent orchestration (a rerunnable script that spawns and pipelines subagents) is currently a **Claude Code** capability; everyone else offers fan-out via task tools, SDK control, or hosted canvases. If you need deterministic control flow across agents, the matrix narrows your field fast — which is exactly the question this atlas was built to answer.
+Scripted multi-agent orchestration (a rerunnable script that spawns and pipelines subagents) is currently a **Claude Code** capability; everyone else offers fan-out via task tools, SDK control, or hosted canvases. The notable exception in v2: **GitHub Copilot CLI**'s `/fleet`, which turns the main agent into a dependency-aware orchestrator with a live, nestable subagent tree you can steer mid-run — supervision depth unusual for a chat-style CLI. If you need deterministic control flow across agents, the matrix narrows your field fast — which is exactly the question this atlas was built to answer.
+
+## 6. The compatibility chain has a direction
+
+v2's new rows sharpen §2 into a pattern with a direction: the ecosystem converges on **Claude Code's surfaces** as the de-facto interchange format.
+
+- **Kilo Code**'s CLI descends from OpenCode and still deep-merges `opencode.json`; OpenCode reads `CLAUDE.md` and `.claude/skills`; **Continue** (now finished) shipped SKILL.md loading plus `CLAUDE.md`/`AGENTS.md`/`CODEX.md` memory-file support and a Claude Code-compatible hooks engine.
+- Read as a graph: Kilo → OpenCode → Claude Code conventions, with Continue pointing the same way from beyond its end-of-life.
+
+The practical consequence: writing a skill or memory file to Claude Code's layout currently maximizes portability across four harnesses. That is an empirical observation about this snapshot, not an endorsement — the direction could reverse if another surface wins.
+
+## 7. Governance is now a differentiator — and a mirror
+
+Three governance facts from v2 deserve attention:
+
+- **Zed**'s CONTRIBUTING.md states it does "not accept contributions from autonomous agents" and bans undisclosed LLM-written PR discussion — the strictest stance in the set, from a product built around agentic coding.
+- **Kilo Code** was acquired by Anaconda while deprecating its signature Orchestrator mode; corporate ownership reshaping roadmaps is now visible inside capability tables.
+- **Continue** is finished: read-only repo, frozen docs, dead Hub domain — yet its last release quietly carries the compatibility layer §6 describes.
+
+A mirror, stated plainly: this atlas is itself agent-assisted research. We hold the line where Zed draws it for *contributions* — every cell cites a human-checkable source URL, and the prose is reviewable line by line. Governance rows exist so readers can apply their own line wherever they draw it.
