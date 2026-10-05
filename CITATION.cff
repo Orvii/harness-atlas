@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you cite the harness-atlas snapshot in research or writing, please use this metadata."
+type: dataset
+title: "harness-atlas — capability matrix of AI coding harnesses, pinned and evidenced"
+authors:
+  - name: "Orvii"
+    alias: "Orvii collective"
+identifiers:
+  - type: url
+    value: "https://github.com/Orvii/harness-atlas"
+repository-code: "https://github.com/Orvii/harness-atlas"
+version: "v3"
+date-released: "2026-10-05"
+notes: "Snapshot dataset: 17 harnesses x 14 capabilities with per-cell evidence URLs and release-tag version pins as of date-released. Cite the snapshot date, not the repo, when quoting cells."
