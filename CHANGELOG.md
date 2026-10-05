@@ -22,3 +22,9 @@
 ### Added
 - Research run wf_d9fe5bfc: one researcher per harness, official docs only, per-cell evidence URL + verbatim quote, release-tag version pins
 - `matrix.md`, `matrix.yaml`, `harnesses/*.md`, `SYNTHESIS.md`, `METHODOLOGY.md`, `hero.svg`
+
+## [2026-10-05] - v3.1: gates, coverage honesty, reading guides
+
+### Added
+- `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates
+- README "How to read a cell" — partial is a verdict with a note; unknown is absence of evidence

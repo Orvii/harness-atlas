@@ -17,6 +17,7 @@ Seventeen harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 | [SYNTHESIS.md](SYNTHESIS.md) | what the grid actually says — interop, transitions, trust models |
 | [METHODOLOGY.md](METHODOLOGY.md) | how cells are produced and how to re-run |
 | [TRUST.md](TRUST.md) | the three trust layers (OS sandbox, prompts, model review) and who defaults to what |
+| [GATES.md](GATES.md) | flags, tiers, OS limits, maturity labels and deprecations behind each ✅ |
 
 ## Why this exists
 
