@@ -30,6 +30,10 @@ If you only read one file, read [SYNTHESIS.md](SYNTHESIS.md). Short version: the
 
 ✅ documented yes · ◐ partial (read the note) · ✗ documented no · ? unknown/unverified
 
+## How to read a cell
+
+Take `sandboxing ◐` on some row. It means: on the cited date, the cited doc page documented sandboxing **with a stated limitation** — and the note in that row's capability table says which limitation (off by default, platform-restricted, experimental). `◐` is never a hedge: the note is the verdict's second half. A `?` means the researcher could not fetch a page that answers the question — absence of evidence, recorded as such, never guessed.
+
 ---
 
 Orvii — Open, Research, Vision, Innovation & Ideas. Regenerate with `scripts/generate.py` against a fresh research journal; see METHODOLOGY.
