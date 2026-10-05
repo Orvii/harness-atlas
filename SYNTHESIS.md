@@ -1,6 +1,6 @@
 # Synthesis — what the matrix actually says
 
-As of 2026-10-05 (v2: 14 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
+As of 2026-10-05 (v3: 17 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
 
 ## 1. The capability floor has moved
 
@@ -41,7 +41,8 @@ Scripted multi-agent orchestration (a rerunnable script that spawns and pipeline
 v2's new rows sharpen §2 into a pattern with a direction: the ecosystem converges on **Claude Code's surfaces** as the de-facto interchange format.
 
 - **Kilo Code**'s CLI descends from OpenCode and still deep-merges `opencode.json`; OpenCode reads `CLAUDE.md` and `.claude/skills`; **Continue** (now finished) shipped SKILL.md loading plus `CLAUDE.md`/`AGENTS.md`/`CODEX.md` memory-file support and a Claude Code-compatible hooks engine.
-- Read as a graph: Kilo → OpenCode → Claude Code conventions, with Continue pointing the same way from beyond its end-of-life.
+- v3 widens the chain: **Mistral's Vibe** imports Claude Code / Codex / Kimi / OpenCode plugin packages and ships OpenAI/Anthropic/Vertex adapters; **Crush** discovers skills from `~/.claude/skills` and `.claude/skills` alongside its own paths and documents its single hook as explicitly Claude Code-compatible.
+- Read as a graph: Kilo → OpenCode → Claude Code conventions, Continue and Vibe pointing the same way from opposite ends (one finished, one migrating), Crush converging on the skill-directory layout.
 
 The practical consequence: writing a skill or memory file to Claude Code's layout currently maximizes portability across four harnesses. That is an empirical observation about this snapshot, not an endorsement — the direction could reverse if another surface wins.
 
@@ -52,5 +53,6 @@ Three governance facts from v2 deserve attention:
 - **Zed**'s CONTRIBUTING.md states it does "not accept contributions from autonomous agents" and bans undisclosed LLM-written PR discussion — the strictest stance in the set, from a product built around agentic coding.
 - **Kilo Code** was acquired by Anaconda while deprecating its signature Orchestrator mode; corporate ownership reshaping roadmaps is now visible inside capability tables.
 - **Continue** is finished: read-only repo, frozen docs, dead Hub domain — yet its last release quietly carries the compatibility layer §6 describes.
+- **Amazon Q Developer CLI** inverts the pattern: a discontinued open-source CLI whose last releases hid a power-user arsenal (blocking preToolUse hooks, delegate subagents, an agent-scoped semantic knowledge base) behind `/experiment` toggles — capability that shipped to no audience.
 
 A mirror, stated plainly: this atlas is itself agent-assisted research. We hold the line where Zed draws it for *contributions* — every cell cites a human-checkable source URL, and the prose is reviewable line by line. Governance rows exist so readers can apply their own line wherever they draw it.
