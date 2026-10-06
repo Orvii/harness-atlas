@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://orvii.github.io/harness-atlas/sitemap.xml

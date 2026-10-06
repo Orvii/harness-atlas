@@ -272,6 +272,18 @@ def main():
                                       .replace("__N__", str(len(harnesses))))
     (SITE / ".nojekyll").write_text("")
     (SITE / "feed.xml").write_text(build_feed(as_of))
+    (SITE / "robots.txt").write_text(
+        "User-agent: *\nAllow: /\nSitemap: https://orvii.github.io/harness-atlas/sitemap.xml\n")
+    (SITE / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        '  <url><loc>https://orvii.github.io/harness-atlas/</loc>'
+        f'<lastmod>{as_of}</lastmod><changefreq>weekly</changefreq></url>\n'
+        '  <url><loc>https://orvii.github.io/harness-atlas/method.html</loc>'
+        f'<lastmod>{as_of}</lastmod><changefreq>monthly</changefreq></url>\n'
+        '  <url><loc>https://orvii.github.io/harness-atlas/feed.xml</loc>'
+        f'<lastmod>{as_of}</lastmod><changefreq>weekly</changefreq></url>\n'
+        '</urlset>\n')
     print(f"wrote {SITE.relative_to(ROOT)}/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
     missing = sum(1 for h in harnesses for c in h["caps"] if c["support"] != "unknown" and not c["evidence"])
     if missing:
@@ -287,6 +299,12 @@ TEMPLATE = r"""<!doctype html>
 <title>harness-atlas — the capability grid, clickable</title>
 <meta name="description" content="What __COUNT__ AI coding harnesses promise and support. Every cell opens the note and the fetched-doc URL it was read from. Versions pinned, snapshot dated.">
 <link rel="alternate" type="application/atom+xml" title="harness-atlas data snapshots" href="./feed.xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="harness-atlas — what coding agents promise, and what they support">
+<meta property="og:description" content="__COUNT__ AI coding harnesses x 14 capabilities, one snapshot date. Every cell cites the vendor doc it was read from; versions pinned; unknown over guessed.">
+<meta property="og:url" content="https://orvii.github.io/harness-atlas/">
+<meta property="og:image" content="https://orvii.github.io/harness-atlas/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
