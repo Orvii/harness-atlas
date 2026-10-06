@@ -16,6 +16,7 @@ on:
       - "SYNTHESIS.md"
       - "TRUST.md"
       - "GATES.md"
+      - "journals/**"
 
 permissions:
   contents: write

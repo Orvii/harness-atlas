@@ -1,5 +1,16 @@
 # Changelog
 
+## [2026-10-06] - enforced reproducibility: public journals + regeneration gate
+
+### Added
+- `journals/` — sanitized researcher results (one JSON line each; head + enrichment lines, wave-ordered; MANIFEST.md records merge order). `python3 scripts/generate.py journals/*.jsonl` in wave order reproduces every committed page byte-identically.
+- `scripts/export-journals.py` — exports sanitized results from workflow journals in the generator's line shape.
+- `.github/workflows/regen-check.yml` — regenerates pages from journals/ on data-path pushes and fails if any page or the harness set differs.
+
+### Modified
+- `scripts/generate.py` — enrichment-only results may enrich an existing row but never start one; `as_of` carried forward from the committed matrix.yaml so regeneration is byte-stable.
+- `VERIFYING.md`, method page — point at the public journals and the enforced regeneration.
+
 ## [2026-10-06] - site redesign: specimen-plate layout, plate-mode grid, deep links
 
 ### Modified
