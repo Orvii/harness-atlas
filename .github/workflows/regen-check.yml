@@ -53,7 +53,7 @@ jobs:
       - name: diff pages against regenerated output
         run: |
           fail=0
-          for f in harnesses/*.md matrix.md matrix.yaml; do
+          for f in harnesses/*.md matrix.md matrix.yaml matrix.csv; do
             if ! diff -q "$f" "/tmp/regen/$f" >/dev/null; then
               echo "::error file=$f::page drifted from journals/ — regenerate or fix the journal"
               diff "$f" "/tmp/regen/$f" | head -20

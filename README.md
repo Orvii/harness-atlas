@@ -18,6 +18,7 @@ Twenty-five harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 |---|---|
 | [matrix.md](matrix.md) | the capability grid, symbols linked to per-harness pages |
 | [matrix.yaml](matrix.yaml) | same grid, machine-readable, with `as_of` |
+| [matrix.csv](matrix.csv) | same grid as CSV — verdict words, one row per harness, for spreadsheets |
 | [harnesses/](harnesses/) | one page per harness: promises, capability table with evidence links, notable findings |
 | [SYNTHESIS.md](SYNTHESIS.md) | what the grid actually says — interop, transitions, trust models |
 | [METHODOLOGY.md](METHODOLOGY.md) | how cells are produced and how to re-run |

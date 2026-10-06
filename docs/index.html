@@ -535,6 +535,14 @@ function closeDrawer() {
 document.getElementById("d-close").addEventListener("click", closeDrawer);
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
 
+/* "/" jumps to the filter from anywhere outside an input */
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) {
+    e.preventDefault();
+    document.getElementById("q").focus();
+  }
+});
+
 /* arrow keys walk the grid: a 25x14 button field is unusable by Tab alone */
 grid.addEventListener("keydown", e => {
   const b = e.target.closest(".cell");

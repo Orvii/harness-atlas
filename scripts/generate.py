@@ -191,7 +191,19 @@ def main(journals: list, out: Path) -> None:
             f = feats.get(fid)
             y.append(f"      {fid}: {json.dumps(f['supported']) if f else '\"unknown\"'}")
     (out / "matrix.yaml").write_text("\n".join(y) + "\n")
-    print(f"wrote {len(rows)} harness pages + matrix.md + matrix.yaml")
+
+    # matrix.csv — the same grid for spreadsheet people: one row per harness,
+    # one column per capability, verdict words (not symbols)
+    import csv
+    with (out / "matrix.csv").open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["harness", "id", "version"] + [fid for fid, _ in FEATURES])
+        for r in rows:
+            feats = {f["id"]: f for f in r["features"]}
+            w.writerow([r["harness"], slug(r["harness"]), r["version"]] +
+                       [feats[fid]["supported"] if fid in feats else "unknown"
+                        for fid, _ in FEATURES])
+    print(f"wrote {len(rows)} harness pages + matrix.md + matrix.yaml + matrix.csv")
 
 
 if __name__ == "__main__":
