@@ -78,6 +78,11 @@ STABLE = re.compile(r"nightly|-(pre|rc|beta|alpha)\b", re.I)
 # sits after descriptive words — "Kiro CLI 2.27.0", "Qodo 3.0" — is a vendor
 # label, not a release tag, and must not be extracted.
 PIN = re.compile(r"^(?:[A-Za-z][A-Za-z0-9]*-)?(v?\d+(?:\.\d+){2,4}(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?)")
+# Fallback for a pin that opens with words but DID name its GitHub stream, as
+# the task's example does: "GitHub v0.86.0 (2025-08-09), PyPI 0.86.2" -> the
+# tag right after the word "GitHub". Anchored to "GitHub" on purpose so a
+# vendor label ("Kiro CLI 2.27.0") still yields no tag.
+GITHUB_TAG = re.compile(r"github\s+(v?\d+(?:\.\d+){2,4}(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?)", re.I)
 # The leading segment of a release tag: everything before the version begins.
 # `v0.62.0` -> "v", `rust-v0.160.0` -> "rust-", `desktop-v0.0.43` -> "desktop-",
 # `sdk-typescript-v0.1.18` -> "sdk-typescript-".
@@ -103,25 +108,21 @@ class NotDiffable(Exception):
 def resolve_version(pin):
     """The GitHub release tag a pin names, or raise NotDiffable.
 
-    A pin like "v0.86.0" is the tag itself. One that explicitly says GitHub —
-    "v0.86.0 (latest GitHub release; PyPI aider-chat latest is 0.86.2)" — names
-    the GitHub stream even when it also carries a second version, so the FIRST
-    version is the tag. A pin whose body is a vendor label rather than a tag
-    ("Qodo 3.0", "Cursor 3.x") names no stream we can diff."""
+    A pin that opens with the tag is that tag: "v0.86.0", "rust-v0.160.0",
+    "v0.86.0 (latest GitHub release; PyPI aider-chat latest is 0.86.2)". A
+    pin that opens with a vendor label ("Qodo 3.0", "Cursor 3.x") does NOT
+    name a tag — the label must never be mistaken for one. Such a pin is
+    diffable only when it says GitHub and gives the tag right after the word,
+    e.g. "GitHub v0.86.0 (2025-08-09), PyPI 0.86.2"."""
     m = PIN.match(pin)
-    if not m:
-        raise NotDiffable
-    token, head = m.group(1), pin[: m.start(1)]
-    if "github" in pin.lower():
-        v = re.search(r"\d+(?:\.\d+){2,4}(?:-[0-9A-Za-z.]+)?", token)
-        if not v:
-            raise NotDiffable
-        return "v" + v.group(0)
-    if any(ch.isdigit() for ch in head):
-        raise NotDiffable
-    # Keep the whole matched tag, identifier prefix included: `rust-v0.160.0`
-    # and `desktop-v0.0.43` must stay distinguishable from a plain `v0.160.0`.
-    return m.group(0)
+    if m and not any(ch.isdigit() for ch in pin[: m.start(1)]):
+        # Keep the whole matched tag, identifier prefix included:
+        # `rust-v0.160.0` must not be flattened to `v0.160.0`.
+        return m.group(0)
+    g = GITHUB_TAG.search(pin)
+    if g:
+        return g.group(1)
+    raise NotDiffable
 
 
 def latest_in_stream(path, core):
