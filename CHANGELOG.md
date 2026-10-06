@@ -1,10 +1,11 @@
 # Changelog
 
-## [2026-10-05] - v3.1: gates, coverage honesty, reading guides
+## [2026-10-06] - site redesign: specimen-plate layout, plate-mode grid, deep links
 
-### Added
-- `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates
-- README "How to read a cell" — partial is a verdict with a note; unknown is absence of evidence
+### Modified
+- `scripts/build_site.py` — index.html rebuilt around a broadsheet masthead: two-column head with a framed "reading the plate" specimen (symbol key, live cell sample, snapshot ledger) replacing the chip row; legend moved out of the toolbar; toolbar gains verdict filter (rows containing ●/◐/○/?) and row sort (name a–z, most documented, most contested); compare view gains a disagreement-count summary line; grid gains a per-column census bar (yes/partial/no/unknown proportions + documented count) as a second sticky head row and two-digit row indices; every cell is deep-linkable (`#<harness>/<capability>`) with a copy-link button in the drawer; `<noscript>` fallback points at matrix.md.
+- `scripts/build_site.py` — sticky-head fix: the grid is now its own scroll plate on desktop (`max-height` + `overflow: auto`), so the head pins to the plate top; on ≤980px the head goes static and the name column stays pinned. Root cause: an `overflow-x` scroll container becomes the sticky reference, which previously floated the head mid-grid on small screens.
+- `scripts/build_site.py` — shared CSS keeps `.chips`/`.chip` for method.html; entry animation shortened to 350ms.
 
 ## [2026-10-05] - v3.3: twenty-five harnesses — the cloud-autonomous cluster
 
@@ -32,6 +33,12 @@
 - `TRUST.md` analysis bullets rewritten against the enlarged table: prompts 19/20, no-OS-sandbox 8/20, partial 4/20.
 - `README.md` "How to read a cell" and `TRUST.md` intro now state the `sandboxing` definitional gap explicitly — the matrix cell counts permission gating, TRUST separates the layers, and where they disagree TRUST is the one to use for a security decision (OpenCode and Cline are the concrete cases).
 - Stripped internal-process phrasing ("task-provided", "the task's") from `harnesses/sourcegraph-amp.md`, `harnesses/continue.md`, `harnesses/vibe.md` — the dead-URL findings stay, described as legacy/canonical paths instead.
+
+## [2026-10-05] - v3.1: gates, coverage honesty, reading guides
+
+### Added
+- `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates
+- README "How to read a cell" — partial is a verdict with a note; unknown is absence of evidence
 
 ## [2026-10-05] - v3: 17 harnesses, deep sections, trust + precedence + citation
 
