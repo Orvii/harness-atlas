@@ -1,5 +1,15 @@
 # Changelog
 
+## [2026-10-06] - wave 6 link-rot repair: twelve moved evidence URLs re-pointed
+
+### Modified
+- `journals/wf_v34-incoming.jsonl` (and the gitignored `journals-incoming/` sources) — eleven vendor doc pages that moved between the research run and publication, plus one prose citation, re-pointed to their live canonical URLs: Augment `cli/agents`→`cli/subagents`, `cli/integrations-and-mcp`→`cli/integrations`, `cosmos/sessions`→`cosmos/sessions-overview`, `cosmos/understanding-automation`→`cosmos/automations`, `setup-augment/install-augment-for-{vscode,jetbrains}`→ the live IDE-setup paths; Replit `features/agent/task-system`→`core-concepts/agent/task-system`, `replitai/build-in-parallel`→`learn/build-in-parallel`, `replitai/mcp`→`chat/connect-through-mcp`, `billing/managing-your-spend`→`billing/managing-spend`, `replitai/plan-vs-build-mode`→`learn/plan-vs-build-mode`; Bolt `integrations/github`→`integrations/git`.
+- `harnesses/{augment-code,replit-agent,bolt}.md` regenerated — verdicts and notes unchanged, only the citation URLs moved.
+- The Replit MCP quote, which the vendor rewrote out of existence on the new page, is updated verbatim to the live sentence ("The Model Context Protocol (MCP) is an open standard…"); the old wording is no longer published anywhere, so the contract keeps the quote honest rather than pointing at a dead page.
+
+### Verified
+- All 45 claim-bearing URLs on the three regenerated pages resolve 2xx/3xx; regeneration is byte-stable across two runs.
+
 ## [2026-10-06] - v3.4: thirty harnesses — the capability-vendor cluster
 
 ### Added

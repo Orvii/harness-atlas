@@ -37,7 +37,7 @@ Project knowledge is described as persistent and available after context is clea
 
 ## Ecosystem
 
-The GitHub integration documents repository sync and automatic saves; branch merges must be completed in GitHub. The documentation index lists integrations including Expo, Figma, GitHub, Netlify, Stripe, and Supabase. Forge offers several selectable models, but its documentation does not identify their providers. (https://support.bolt.new/integrations/github, https://support.bolt.new/llms.txt, https://support.bolt.new/account-and-subscription/bolt-forge.md)
+The GitHub integration documents repository sync and automatic saves; branch merges must be completed in GitHub. The documentation index lists integrations including Expo, Figma, GitHub, Netlify, Stripe, and Supabase. Forge offers several selectable models, but its documentation does not identify their providers. (https://support.bolt.new/integrations/git, https://support.bolt.new/llms.txt, https://support.bolt.new/account-and-subscription/bolt-forge.md)
 
 ## Governance
 
@@ -59,7 +59,7 @@ The Plan Mode documentation says homepage use creates the app's base structure b
 > — [https://support.bolt.new/best-practices/manage-context.md](https://support.bolt.new/best-practices/manage-context.md)
 
 > Bolt currently doesn't support merging branches in-app.  
-> — [https://support.bolt.new/integrations/github](https://support.bolt.new/integrations/github)
+> — [https://support.bolt.new/integrations/git](https://support.bolt.new/integrations/git)
 
 
 ## Notable
@@ -92,7 +92,7 @@ Plan Mode is not documented as a strict plan-then-approve gate, and its homepage
 - https://support.bolt.new/prompting/prompt-effectively
 - https://support.bolt.new/integrations/git
 - https://support.bolt.new/integrations/git.md
-- https://support.bolt.new/integrations/github
+- https://support.bolt.new/integrations/git
 - https://support.bolt.new/account-and-subscription/tokens
 - https://support.bolt.new/account-and-subscription/tokens.md
 - https://support.bolt.new/account-and-subscription/billing

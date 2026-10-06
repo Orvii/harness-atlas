@@ -12,16 +12,16 @@ Augment presents Auggie as a terminal coding agent combining an agent, Context E
 
 | capability | support | note | evidence |
 |---|---|---|---|
-| subagents | ✅ yes | Auggie supports configurable subagents that run in parallel with independent context. | [src](https://docs.augmentcode.com/cli/agents) |
-| workflow_orchestration | ✅ yes | Cosmos documents trigger-driven Expert sessions, manager-to-worker delegation, and software-factory workflows. | [src](https://docs.augmentcode.com/cosmos/understanding-automation) |
-| mcp | ✅ yes | Auggie supports MCP servers, and the Context Engine is available to agents over MCP. | [src](https://docs.augmentcode.com/cli/integrations-and-mcp) |
+| subagents | ✅ yes | Auggie supports configurable subagents that run in parallel with independent context. | [src](https://docs.augmentcode.com/cli/subagents) |
+| workflow_orchestration | ✅ yes | Cosmos documents trigger-driven Expert sessions, manager-to-worker delegation, and software-factory workflows. | [src](https://docs.augmentcode.com/cosmos/automations) |
+| mcp | ✅ yes | Auggie supports MCP servers, and the Context Engine is available to agents over MCP. | [src](https://docs.augmentcode.com/cli/integrations) |
 | hooks_lifecycle | ✅ yes | Hooks cover tool and session lifecycle events; only PreToolUse can block a tool. | [src](https://docs.augmentcode.com/cli/hooks) |
 | skills | ✅ yes | Reusable skills provide specialized guidance and workflows. | [src](https://docs.augmentcode.com/cli/skills) |
 | memory_persistence | ✅ yes | Cosmos Experts can retain Markdown memory across sessions. | [src](https://docs.augmentcode.com/cosmos/experts-memory) |
 | sandboxing | ◐ partial | Tool permissions can allow, deny, or delegate decisions, but the documented enforcement does not apply to the IDE extension. | [src](https://docs.augmentcode.com/cli/permissions) |
 | plan_mode | ? unknown | Tasklists support breaking work into steps and reviewing it, but the fetched documentation does not establish an explicit plan-then-approve gate. | [src](https://docs.augmentcode.com/using-augment/tasklist) |
 | background_tasks | ✅ yes | CLI print mode is documented for automation and background tasks; Cosmos also documents parallel worker sessions. | [src](https://docs.augmentcode.com/cli/overview) |
-| ide_integration | ✅ yes | Official integrations include VS Code and JetBrains IDEs. | [src](https://docs.augmentcode.com/setup-augment/install-augment-for-vscode) |
+| ide_integration | ✅ yes | Official integrations include VS Code and JetBrains IDEs. | [src](https://docs.augmentcode.com/setup-augment/install-visual-studio-code) |
 | model_agnostic | ✅ yes | The model catalog includes multiple providers and documents user model selection. | [src](https://docs.augmentcode.com/models/available-models) |
 | plugins | ✅ yes | Auggie supports plugins distributed through Git-based marketplaces. | [src](https://docs.augmentcode.com/cli/plugins) |
 | session_resume | ✅ yes | CLI options support continuing or selecting saved sessions; Cosmos conversations are saved indefinitely. | [src](https://docs.augmentcode.com/cli/reference) |
@@ -33,7 +33,7 @@ Augment provides IDE integrations and the Auggie CLI, alongside a Context Engine
 
 ## Context management
 
-The Context Engine combines code search with relationships across files and repositories, and can incorporate sources such as commit history, documentation, and tickets. Auggie can index the current workspace, with controls over which files are indexed. The docs describe local indexing as updating in real time and remote repository indexing around default-branch commits. Cosmos adds independent agent contexts, persistent Expert memory, and saved sessions; long-paused environments may restart clean and lose uncommitted workspace changes. (https://docs.augmentcode.com/cli/integrations-and-mcp, https://docs.augmentcode.com/cosmos/sessions)
+The Context Engine combines code search with relationships across files and repositories, and can incorporate sources such as commit history, documentation, and tickets. Auggie can index the current workspace, with controls over which files are indexed. The docs describe local indexing as updating in real time and remote repository indexing around default-branch commits. Cosmos adds independent agent contexts, persistent Expert memory, and saved sessions; long-paused environments may restart clean and lose uncommitted workspace changes. (https://docs.augmentcode.com/cli/integrations, https://docs.augmentcode.com/cosmos/sessions-overview)
 
 ## Ecosystem
 
@@ -56,7 +56,7 @@ The fetched documentation does not establish an explicit plan-then-approve mode;
 > — [https://docs.augmentcode.com/cli/overview](https://docs.augmentcode.com/cli/overview)
 
 > A Session's conversation is saved indefinitely — it doesn't expire.  
-> — [https://docs.augmentcode.com/cosmos/sessions](https://docs.augmentcode.com/cosmos/sessions)
+> — [https://docs.augmentcode.com/cosmos/sessions-overview](https://docs.augmentcode.com/cosmos/sessions-overview)
 
 > Your selection can be changed at any time.  
 > — [https://docs.augmentcode.com/models/available-models](https://docs.augmentcode.com/models/available-models)
@@ -70,8 +70,8 @@ The documented product surface extends beyond the IDE plugin and CLI to Cosmos c
 
 - https://docs.augmentcode.com/
 - https://docs.augmentcode.com/llms.txt
-- https://docs.augmentcode.com/cli/agents
-- https://docs.augmentcode.com/cli/integrations-and-mcp
+- https://docs.augmentcode.com/cli/subagents
+- https://docs.augmentcode.com/cli/integrations
 - https://docs.augmentcode.com/cli/hooks
 - https://docs.augmentcode.com/cli/plugins
 - https://docs.augmentcode.com/cli/skills
@@ -81,8 +81,8 @@ The documented product surface extends beyond the IDE plugin and CLI to Cosmos c
 - https://docs.augmentcode.com/cli/rules-guidelines
 - https://docs.augmentcode.com/context-services/mcp
 - https://docs.augmentcode.com/using-augment/tasklist
-- https://docs.augmentcode.com/cosmos/understanding-automation
-- https://docs.augmentcode.com/cosmos/sessions
+- https://docs.augmentcode.com/cosmos/automations
+- https://docs.augmentcode.com/cosmos/sessions-overview
 - https://docs.augmentcode.com/cosmos/experts-memory
 - https://docs.augmentcode.com/cosmos/delegating-work
 - https://docs.augmentcode.com/cosmos/software-factory
@@ -91,8 +91,8 @@ The documented product surface extends beyond the IDE plugin and CLI to Cosmos c
 - https://docs.augmentcode.com/models/available-models
 - https://docs.augmentcode.com/analytics/credit-dashboard-and-quotas
 - https://docs.augmentcode.com/usage/token-based-pricing
-- https://docs.augmentcode.com/setup-augment/install-augment-for-vscode
-- https://docs.augmentcode.com/setup-augment/install-augment-for-jetbrains
+- https://docs.augmentcode.com/setup-augment/install-visual-studio-code
+- https://docs.augmentcode.com/jetbrains/setup-augment/install-jetbrains-ides
 - https://docs.augmentcode.com/cli/config
 - https://docs.augmentcode.com/cli/autoupgrade
 - https://registry.npmjs.org/@augmentcode%2Fauggie/latest
