@@ -1,3 +1,7 @@
 journals-incoming/
 __pycache__/
 *.pyc
+.atlas-audit/
+.atlas-verify/
+.atlas-site/
+.atlas-fix/
