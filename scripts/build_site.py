@@ -55,7 +55,7 @@ def load_yaml():
     order, data = [], {}
     cur = None
     in_features = False
-    for line in (ROOT / "matrix.yaml").read_text().splitlines():
+    for line in (ROOT / "matrix.yaml").read_text(encoding="utf-8").splitlines():
         m = re.match(r"  - id: (\S+)", line)
         if m:
             cur = m.group(1)
@@ -88,7 +88,7 @@ def load_yaml():
 def load_pages():
     pages = {}
     for p in sorted((ROOT / "harnesses").glob("*.md")):
-        t = p.read_text()
+        t = p.read_text(encoding="utf-8")
         head = {}
         for key in ("repo", "version pin", "docs home"):
             m = re.search(rf"^- \*\*{re.escape(key)}:\*\* (.+)$", t, re.M)
@@ -182,7 +182,7 @@ def build_feed(as_of: str) -> str:
     import html as htmllib
     entries = []
     cur = None
-    for line in (ROOT / "CHANGELOG.md").read_text().splitlines():
+    for line in (ROOT / "CHANGELOG.md").read_text(encoding="utf-8").splitlines():
         m = re.match(r"^## \[(\d{4}-\d{2}-\d{2})\] - (.+)$", line)
         if m:
             cur = {"date": m.group(1), "title": m.group(2), "body": []}
@@ -241,9 +241,9 @@ def main():
         })
 
     as_of = re.search(r"^as_of: \"?(\d{4}-\d{2}-\d{2})\"?",
-                      (ROOT / "matrix.yaml").read_text(), re.M)
+                      (ROOT / "matrix.yaml").read_text(encoding="utf-8"), re.M)
     as_of = as_of.group(1) if as_of else "unknown"
-    version = re.search(r'^version: "(.+)"', (ROOT / "CITATION.cff").read_text(), re.M)
+    version = re.search(r'^version: "(.+)"', (ROOT / "CITATION.cff").read_text(encoding="utf-8"), re.M)
     version = version.group(1) if version else "dev"
 
     hist = tag_history()
@@ -292,17 +292,17 @@ def main():
         "measurementTechnique": "documentation review with per-cell evidence URLs",
     }))
     SITE.mkdir(exist_ok=True)
-    (SITE / "index.html").write_text(html)
+    (SITE / "index.html").write_text(html, encoding="utf-8")
     style = re.search(r"<style>(.*?)</style>", TEMPLATE, re.S).group(1)
     (SITE / "method.html").write_text(METHOD_TEMPLATE
                                       .replace("__CSS__", style)
                                       .replace("__AS_OF__", as_of)
                                       .replace("__VERSION__", version)
-                                      .replace("__N__", str(len(harnesses))))
-    (SITE / ".nojekyll").write_text("")
-    (SITE / "feed.xml").write_text(build_feed(as_of))
+                                      .replace("__N__", str(len(harnesses))), encoding="utf-8")
+    (SITE / ".nojekyll").write_text("", encoding="utf-8")
+    (SITE / "feed.xml").write_text(build_feed(as_of), encoding="utf-8")
     (SITE / "robots.txt").write_text(
-        "User-agent: *\nAllow: /\nSitemap: https://orvii.github.io/harness-atlas/sitemap.xml\n")
+        "User-agent: *\nAllow: /\nSitemap: https://orvii.github.io/harness-atlas/sitemap.xml\n", encoding="utf-8")
     (SITE / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -312,7 +312,7 @@ def main():
         f'<lastmod>{as_of}</lastmod><changefreq>monthly</changefreq></url>\n'
         '  <url><loc>https://orvii.github.io/harness-atlas/feed.xml</loc>'
         f'<lastmod>{as_of}</lastmod><changefreq>weekly</changefreq></url>\n'
-        '</urlset>\n')
+        '</urlset>\n', encoding="utf-8")
     print(f"wrote {SITE.relative_to(ROOT)}/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
     missing = sum(1 for h in harnesses for c in h["caps"] if c["support"] != "unknown" and not c["evidence"])
     if missing:
