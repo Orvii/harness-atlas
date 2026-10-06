@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-10-06] - full-audit link-rot pass: Qodo repaired, cited-as-dead class recognized
+
+### Modified
+- `journals/wf_v34-incoming.jsonl` — the first full two-class audit (636 claim-bearing URLs across all six waves, previously only markdown-linked forms were checked) found two genuinely dead Qodo prose citations: `code-review/trigger-a-code-review` → `install-qodo/install` (its installation matrix carries the platform list the sentence claims, and the sentence now names the platforms the live page names: Bitbucket Cloud and Data Center, Azure DevOps) and `agentic-toolbox/manage-standards` → `…/manage-standards-skill`. Verdicts unchanged.
+- `scripts/link-rot.sh` — third URL class: **cited-as-dead**. A note may cite a URL precisely because it 404s ("the architecture page returned HTTP 404" — Aider; "docs frozen" — Continue; "legacy slug" — Sourcegraph Amp). The checker detects the 404 predication in the clause immediately following each URL (bounded by the next URL, a newline, or 60 characters), skips the request, and reports the citation separately. Without this, the gate would flag the atlas's most honest cells — deprecation documentation — as contract violations. The locality bound matters: one Amp sentence cites the dead legacy slug *and* the live replacement docs home in the same breath; window- and sentence-wide heuristics both misclassified the live URL, suppressing its check (caught by comparing run 2's 84 cited-as-dead against the 3 URLs any note actually calls dead).
+
+### Added
+- `reports/link-rot.md` — first full-audit run: 1116 unique URLs, claim/provenance/cited-as-dead separated.
+
 ## [2026-10-06] - wave 6 link-rot repair: twelve moved evidence URLs re-pointed
 
 ### Added

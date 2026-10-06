@@ -37,11 +37,11 @@ The Context Engine documentation describes context from code intelligence, revie
 
 ## Ecosystem
 
-Agentic Toolbox documents CLI, MCP, Claude Code, Codex, and Kiro integrations. The platform overview describes IDE, pull-request, and command-line integration; the PR workflow documentation names GitHub, GitLab, Bitbucket, Bitbucket Server, and Azure DevOps Server. The MCP integration requires Streamable HTTP and custom headers, and access to managed skills depends on workspace permissions. (https://docs.qodo.ai/agentic-toolbox/agentic-toolbox-overview, https://docs.qodo.ai/agentic-toolbox/mcp, https://docs.qodo.ai/core-concepts/qodo-platform-overview, https://docs.qodo.ai/code-review/trigger-a-code-review)
+Agentic Toolbox documents CLI, MCP, Claude Code, Codex, and Kiro integrations. The platform overview describes IDE, pull-request, and command-line integration; the installation matrix names GitHub, GitLab, Bitbucket Cloud and Data Center, and Azure DevOps. The MCP integration requires Streamable HTTP and custom headers, and access to managed skills depends on workspace permissions. (https://docs.qodo.ai/agentic-toolbox/agentic-toolbox-overview, https://docs.qodo.ai/agentic-toolbox/mcp, https://docs.qodo.ai/core-concepts/qodo-platform-overview, https://docs.qodo.ai/install-qodo/install)
 
 ## Governance
 
-Qodo describes Review Standards as explicit rules checked during code review and offers rule creation from natural-language descriptions, supported files, or pull-request history. Governance documentation covers standards across repositories, teams, and services. Admin changes can become active immediately; changes from other users may be submitted as pending suggestions for approval. (https://docs.qodo.ai/governance/rule-enforcement, https://docs.qodo.ai/governance, https://docs.qodo.ai/agentic-toolbox/manage-standards)
+Qodo describes Review Standards as explicit rules checked during code review and offers rule creation from natural-language descriptions, supported files, or pull-request history. Governance documentation covers standards across repositories, teams, and services. Admin changes can become active immediately; changes from other users may be submitted as pending suggestions for approval. (https://docs.qodo.ai/governance/rule-enforcement, https://docs.qodo.ai/governance, https://docs.qodo.ai/agentic-toolbox/manage-standards-skill)
 
 ## Limitations
 
@@ -83,7 +83,7 @@ The vendor's current documentation explicitly calls Qodo Command deprecated, whi
 - https://docs.qodo.ai/agentic-toolbox/agentic-toolbox-review-resolver-skill
 - https://docs.qodo.ai/agentic-toolbox/reviewer-skill
 - https://docs.qodo.ai/agentic-toolbox/get-rules
-- https://docs.qodo.ai/agentic-toolbox/manage-standards
+- https://docs.qodo.ai/agentic-toolbox/manage-standards-skill
 - https://docs.qodo.ai/agentic-toolbox/review-resolver
 - https://docs.qodo.ai/agentic-toolbox/manage-standards-skill
 - https://docs.qodo.ai/agentic-toolbox/codex-plugin
@@ -93,7 +93,7 @@ The vendor's current documentation explicitly calls Qodo Command deprecated, whi
 - https://docs.qodo.ai/code-review
 - https://docs.qodo.ai/code-review/overview
 - https://docs.qodo.ai/code-review/use-qodo-in-prs
-- https://docs.qodo.ai/code-review/trigger-a-code-review
+- https://docs.qodo.ai/install-qodo/install
 - https://docs.qodo.ai/code-governance
 - https://docs.qodo.ai/governance
 - https://docs.qodo.ai/governance/rule-enforcement
