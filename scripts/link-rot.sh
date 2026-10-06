@@ -21,7 +21,34 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p reports
 
-python3 - <<'PY'
+# --- interpreter resolution -------------------------------------------------
+# `command -v python3` alone is not enough. On Windows the Microsoft Store
+# ships a `python3` app-execution alias that RESOLVES on PATH but cannot run:
+# every invocation exits non-zero ("Python was not found; run without
+# arguments to install from the Microsoft Store"). The bare `python3 - <<PY`
+# this script used to write therefore died there before reading a single page,
+# while CI (ubuntu, real python3) was unaffected.
+#
+# So candidates are probed by actually executing them, in CI's preferred order
+# — python3 first, python second — and the first working Python 3 wins.
+# Ubuntu behaviour is unchanged: python3 passes the probe and is used.
+PYTHON=""
+for cand in python3 python; do
+  if command -v "$cand" >/dev/null 2>&1 &&
+     "$cand" -c 'import sys; raise SystemExit(0 if sys.version_info[0] == 3 else 1)' >/dev/null 2>&1; then
+    PYTHON="$cand"
+    break
+  fi
+done
+if [ -z "$PYTHON" ]; then
+  echo "link-rot.sh: no working Python 3 interpreter found (tried: python3, python)." >&2
+  echo "Install Python 3 and put it on PATH. On Windows, note that the Microsoft" >&2
+  echo "Store 'python3' alias resolves but cannot execute — disable that alias," >&2
+  echo "or install the real interpreter, so that 'python' works." >&2
+  exit 127
+fi
+
+"$PYTHON" - <<'PY'
 import re, subprocess, datetime, collections, glob, sys
 from concurrent.futures import ThreadPoolExecutor
 
@@ -68,7 +95,8 @@ def docdead_urls(chunk):
 # url -> [cls, page]; claim outranks provenance, documented-dead outranks plain
 found = {}
 RANK = {"provenance": 0, "claim": 1, "claim-documented-dead": 2}
-for page in sorted(glob.glob("harnesses/*.md")):
+pages = sorted(glob.glob("harnesses/*.md"))
+for page in pages:
     text = open(page, encoding="utf-8").read()
     at = text.find(SPLIT)
     head, tail = text[:at], text[at:]
@@ -113,8 +141,17 @@ for u, cls, page, code in results:
 
 n_claim = sum(1 for v in found.values() if v[0] == "claim")
 n_dead_doc = len(docdead)
+# status keys are mostly "<cls>:<outcome>" ("claim:other:301"), but the
+# documented-dead tally carries no class prefix and no colon at all — so take
+# the text after the FIRST colon when there is one ([1] would IndexError on
+# "documented-dead"; [-1] on rpartition would return only the numeric tail).
+n_ok = status["claim:ok"] + status["provenance:ok"]
+n_other = sum(v for k, v in status.items()
+              if k.split(":", 1)[-1].startswith("other:"))
 out = [f"## {datetime.date.today().isoformat()}",
-       f"checked {len(found)} unique urls — {n_claim} claim-bearing "
+       f"checked {len(found)} unique urls across {len(pages)} pages · "
+       f"ok: {n_ok} · other: {n_other}"
+       f" — {n_claim} claim-bearing "
        f"({n_dead_doc} cited-as-dead, not requested), "
        f"{len(found)-n_claim-n_dead_doc} provenance · " +
        " · ".join(f"{k}: {v}" for k, v in sorted(status.items()))]
