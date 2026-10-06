@@ -1,0 +1,68 @@
+name: regen-check
+
+# The journals/ directory is the public source of every page. If the pages
+# ever drift from what the journals compile to, the evidence contract is
+# broken — fail loudly instead of letting a hand-edit slip in.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "harnesses/**"
+      - "matrix.md"
+      - "matrix.yaml"
+      - "journals/**"
+      - "scripts/generate.py"
+  pull_request:
+    paths:
+      - "harnesses/**"
+      - "matrix.md"
+      - "matrix.yaml"
+      - "journals/**"
+      - "scripts/generate.py"
+
+permissions:
+  contents: read
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: regenerate from public journals
+        run: |
+          mkdir -p /tmp/regen
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "scripts")
+          import importlib.util
+          spec = importlib.util.spec_from_file_location("gen", "scripts/generate.py")
+          gen = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(gen)
+          # wave order: later waves win on conflicts (see journals/MANIFEST.md)
+          order = ["wf_d9fe5bfc-a50", "wf_15cd0c06-541", "wf_3decfb86-b1b",
+                   "wf_bf7ccd99-1e2", "wf_7fea83f9-209"]
+          extra = sorted(p.name for p in Path("journals").glob("*.jsonl")
+                         if p.stem not in order)
+          gen.main([f"journals/{n}.jsonl" for n in order] +
+                   [f"journals/{n}" for n in extra], Path("/tmp/regen"))
+          PY
+
+      - name: diff pages against regenerated output
+        run: |
+          fail=0
+          for f in harnesses/*.md matrix.md matrix.yaml; do
+            if ! diff -q "$f" "/tmp/regen/$f" >/dev/null; then
+              echo "::error file=$f::page drifted from journals/ — regenerate or fix the journal"
+              diff "$f" "/tmp/regen/$f" | head -20
+              fail=1
+            fi
+          done
+          extra=$(cd /tmp/regen/harnesses && ls | sed 's/\.md$//' | sort > /tmp/r.txt; cd "$GITHUB_WORKSPACE/harnesses" && ls | sed 's/\.md$//' | sort > /tmp/c.txt; comm -3 /tmp/c.txt /tmp/r.txt)
+          if [ -n "$extra" ]; then
+            echo "::error::harness set differs between pages and journals: $extra"
+            fail=1
+          fi
+          exit $fail

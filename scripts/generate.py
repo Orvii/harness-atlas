@@ -88,7 +88,13 @@ def load(journals: list) -> list:
                 continue
             r = sanitize(r)
             key = slug(r["harness"])
+            if key not in merged and not (r.get("repo") and r.get("version")):
+                # a result that carries only deep prose and no head fields
+                # cannot start a row; it may only enrich an existing one
+                continue
             cur = merged.setdefault(key, {"harness": r["harness"], "features": []})
+            for field in ("version_source", "docs_home", "promises", "surprises"):
+                cur.setdefault(field, "")
             for field in ("repo", "version", "version_source", "docs_home", "promises", "surprises"):
                 if r.get(field):
                     cur[field] = r[field]
@@ -168,8 +174,12 @@ def main(journals: list, out: Path) -> None:
         md.append(f"| [{r['harness']}](harnesses/{s}.md) | " + " | ".join(cells) + " |")
     (out / "matrix.md").write_text("\n".join(md) + "\n")
 
-    # matrix.yaml
-    y = ["# machine-readable matrix; regenerate with scripts/generate.py", "as_of: 2026-10-05", "harnesses:"]
+    # matrix.yaml — as_of is a property of the research snapshot, not of the
+    # run: carry the committed value forward so a regenerate is byte-stable
+    src_yaml = Path(__file__).resolve().parent.parent / "matrix.yaml"
+    m = re.search(r'^as_of: "?(\d{4}-\d{2}-\d{2})"?', src_yaml.read_text(), re.M) if src_yaml.exists() else None
+    as_of = m.group(1) if m else "unknown"
+    y = ["# machine-readable matrix; regenerate with scripts/generate.py", f"as_of: {as_of}", "harnesses:"]
     for r in rows:
         feats = {f["id"]: f for f in r["features"]}
         y.append(f"  - id: {slug(r['harness'])}")

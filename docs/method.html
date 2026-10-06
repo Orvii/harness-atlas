@@ -298,6 +298,7 @@ main.prose code { color: var(--accent2); }
   <ol>
     <li>One researcher per harness fetches the official docs live and returns a structured record: verdicts with URLs and quotes, a version pin with its source, and five deep sections (architecture, context management, ecosystem, governance, limitations).</li>
     <li>Records land in a journal; a mechanical generator (<code>scripts/generate.py</code>) compiles journals into pages and the matrix. Prose is sanitized at load time so internal research framing can never reach a published page.</li>
+    <li>The sanitized journals are public (<a href="https://github.com/Orvii/harness-atlas/tree/main/journals">journals/</a>), and CI regenerates every page from them on each data change: if a page ever differs from what the journals compile to, the build fails. Reproducibility here is enforced, not promised.</li>
     <li>Nothing is hand-edited after generation. A correction means re-running the research, not patching a cell.</li>
   </ol>
 

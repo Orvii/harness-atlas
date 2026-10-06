@@ -18,15 +18,17 @@ The atlas makes one promise: **every cell is checkable by a stranger in five min
 
 ## Verifying the verification
 
-The extraction journals are not published (they contain researcher working prose), but the contract is mechanical and re-runnable:
+The sanitized research journals are published in [journals/](journals/) — one JSON result per line, working-prose framing stripped at export. The contract is mechanical and re-runnable by anyone:
 
 ```bash
-python3 scripts/generate.py <journal.jsonl> [...]   # rebuilds every page from journals
-scripts/drift-check.sh                               # pins vs current releases, read-only
-scripts/link-rot.sh                                  # dead vs blocked evidence URLs
+python3 scripts/generate.py journals/wf_d9fe5bfc-a50.jsonl journals/wf_15cd0c06-541.jsonl \
+        journals/wf_3decfb86-b1b.jsonl journals/wf_bf7ccd99-1e2.jsonl \
+        journals/wf_7fea83f9-209.jsonl     # rebuilds every page, byte-identical
+scripts/drift-check.sh                     # pins vs current releases, read-only
+scripts/link-rot.sh                        # dead vs blocked evidence URLs
 ```
 
-Both checkers run monthly in CI and commit their reports; a green drift run means *no pin moved since the last run*, not *no pin is stale* — the distinction is the whole point of publishing the log.
+The wave order matters (later waves win on conflicts); [journals/MANIFEST.md](journals/MANIFEST.md) records it. CI runs the same regeneration on every data-path push and fails the build if any page differs from what the journals compile to — a hand-edited cell cannot land. The two checkers above run monthly and commit their reports; a green drift run means *no pin moved since the last run*, not *no pin is stale* — the distinction is the whole point of publishing the log.
 
 ## Reporting
 
