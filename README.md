@@ -24,6 +24,9 @@ Twenty-five harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
 | [TRUST.md](TRUST.md) | the three trust layers (OS sandbox, prompts, model review) and who defaults to what |
 | [GATES.md](GATES.md) | flags, tiers, OS limits, maturity labels and deprecations behind each ✅ |
 | [VERIFYING.md](VERIFYING.md) | how to audit any cell in five minutes, and what a cell is not |
+| [the site](https://orvii.github.io/harness-atlas/) | the grid, clickable: filter, compare up to four harnesses, open any cell's note and evidence URL, deep-link a cell (`#harness/capability`) |
+| [journals/](journals/) | the sanitized research results every page was compiled from — regenerate the atlas with `python3 scripts/generate.py journals/*.jsonl` (wave order in MANIFEST.md); CI fails any drift |
+| [feed.xml](https://orvii.github.io/harness-atlas/feed.xml) | Atom feed of data snapshots, generated from the changelog |
 
 ## Why this exists
 
