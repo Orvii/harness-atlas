@@ -9,6 +9,6 @@ identifiers:
   - type: url
     value: "https://github.com/Orvii/harness-atlas"
 repository-code: "https://github.com/Orvii/harness-atlas"
-version: "v3.4"
+version: "v3.5"
 date-released: "2026-10-06"
-notes: "Snapshot dataset: 30 harnesses x 14 capabilities with per-cell evidence URLs and release-tag version pins as of date-released. Cite the snapshot date, not the repo, when quoting cells."
+notes: "Snapshot dataset: 37 harnesses x 14 capabilities with per-cell evidence URLs and release-tag version pins as of date-released. Cite the snapshot date, not the repo, when quoting cells."

@@ -1,5 +1,27 @@
 # Changelog
 
+## [2026-10-06] - v3.5: thirty-seven harnesses — the platform vendors arrive
+
+### Added
+- Seven rows: **Warp** (terminal-native agent; client is AGPL-3.0 and public at `warpdotdev/warp`; per-action autonomy profiles; orchestration explicitly one level deep; Agent Memory research-preview), **Trae** (ByteDance's VS Code-fork IDE plus a separate VS Code/JetBrains plugin product; opt-in sandbox whose allowlist bypasses it, and an Auto-Run mode the docs say "bypasses all security checks"; SOLO Spec/Plan workflows pause for confirmation), **Google Antigravity** (default-on OS sandbox from Linux kernel namespaces and macOS Seatbelt/SBPL, no VMs or containers; `~/.ssh` and `.env` blocked; Deny > Ask > Allow precedence engine; plugin.json marketplace), **Qoder** (Alibaba; 14/14 capabilities documented as yes — the first row to do so without a partial; three access-permission modes, selectable execution environments incl. isolated git worktrees), **Lovable** and **v0** (web-native builders joining Bolt and Replit — IDEs connect *to* them via MCP rather than the reverse, so `ide_integration` is `no` on the Zed precedent; v0's VM-backed chats run inside a Vercel Sandbox), **Void** (open source, archived, README opens "Void is now deprecated"; below the capability floor because the project stopped, not because it was designed narrow).
+- `scripts/fetch-trae-docs.py` — Trae's docs are a client-side SPA with no `llms.txt`, no `sitemap.xml`, no `.md` variants and no content API: all four return the same 287 KB app shell. The script reads the server-rendered payload the SPA embeds (`window._ROUTER_DATA…docDetail.content`, a component tree of Quill deltas) and flattens it to text, so the row stays reproducible by anyone.
+- `SYNTHESIS.md` §11 — the floor is what a platform vendor ships on day one; documentation architecture became a research variable; Warp breaks the closed-source expectation; the web-native cluster inverts the `ide_integration` axis.
+- `GATES.md` — Trae's Auto-Run added to the eighth kind (the gate that opens under automation), now five rows deep.
+- `TRUST.md` — seven rows; Antigravity and Qoder recorded as *partial* on the model-review column with the reason stated (their docs do not say whether the reviewer is a model or a rule engine).
+
+### Modified
+- Counts to 37 everywhere (README, SYNTHESIS header, TRUST header, hero.svg, CITATION.cff); `as_of` stays 2026-10-06.
+- `SYNTHESIS.md` §1 recomputed — 30 of 37 ship ≥11 of 14 capabilities (rule reverse-engineered from the previous 24-of-30: yes+partial). The seven below now fall into four categories, the new one being *abandoned* (Void).
+- `SYNTHESIS.md` §8 — closed-source rows 9 → 14 of 37; five of the seven new rows rest on vendor docs alone.
+- `SYNTHESIS.md` §10 — deprecation as a row property now has two directions: two rows scheduled to stop (Tabnine, Qodo CLI), one already stopped (Void).
+- `journals/MANIFEST.md` — wave 7 registered, which is all that is needed now that `generate.py` sorts by the manifest itself.
+
+### Fixed
+- `TRUST.md` — a duplicated parenthetical in the OS-sandbox bullet (a stale four-item list left behind when the six-item list was added); prompt-floor and sandbox counts recomputed against the table by script rather than by hand (33 of 37 ship prompts; 11 have no OS sandbox; 8 partial; 2 unknown; 1 n/a).
+
+### Verified
+- Regeneration from journals is byte-identical across two runs; site build byte-stable; all 860 claim-bearing URLs resolve (0 dead); 7 cited-as-dead citations recognized and left alone; no Turkish characters in any new page.
+
 ## [2026-10-06] - full-audit link-rot pass: Qodo repaired, cited-as-dead class recognized
 
 ### Modified

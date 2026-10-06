@@ -14,18 +14,25 @@ Devin,devin,"Devin CLI stable v3000.11.3 (September 22, 2026); cloud release not
 Factory Droid,factory-droid,"v0.233.0 (Droid CLI), v0.190.0 (Desktop app) — October 3, 2026",yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes,yes
 Gemini CLI,gemini-cli,v0.62.0,yes,partial,yes,yes,yes,yes,yes,yes,yes,yes,no,yes,yes,yes
 GitHub Copilot CLI,github-copilot-cli,v1.0.91,yes,yes,yes,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes
+Google Antigravity,google-antigravity,"Antigravity 2.0 v2.19.1 (September 30, 2026); Antigravity CLI v1.2.14 (September 30, 2026)",yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes,yes
 Google Jules,google-jules,No public product semver (closed source). Latest published CLI package: @google/jules 0.1.42 (published 2025-12-16); REST API self-labeled alpha (v1alpha); docs changelog newest entry 2026-03-09,partial,partial,partial,no,no,yes,yes,yes,yes,no,no,no,yes,partial
 Goose,goose,v1.53.0,yes,yes,yes,yes,yes,yes,partial,no,yes,yes,yes,yes,yes,yes
 JetBrains Junie,jetbrains-junie,26.9.22 (3419.26),yes,partial,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
 Kilo Code,kilo-code,v7.8.3,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes
+Lovable,lovable,no published version identifier (checked 2026-10-06),yes,partial,yes,unknown,yes,yes,yes,yes,yes,no,partial,partial,yes,yes
 OpenCode,opencode,v1.18.34,yes,partial,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes
 OpenHands,openhands,v1.24.0,yes,partial,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes
+Qoder,qoder,"Qoder 0.4.2 (Qoder desktop app, 2026-09-24) / Qoder IDE 1.32.0 (2026-09-23); JetBrains plugin 2026.922.75102118 (2026-09-22)",yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
 Qodo,qodo,"Qodo 3.0 (vendor release label, changelog entry 2026-10-01)",unknown,partial,yes,unknown,yes,unknown,unknown,unknown,unknown,yes,unknown,unknown,unknown,unknown
 Qwen Code,qwen-code,v0.24.7,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
 Replit Agent,replit-agent,no published version or release date (docs checked 2026-10-06),unknown,partial,partial,unknown,partial,partial,unknown,partial,partial,unknown,partial,unknown,unknown,partial
 Roo Code,roo-code,v3.54.0,yes,partial,yes,unknown,yes,partial,partial,partial,partial,yes,yes,partial,yes,yes
 Sourcegraph Amp,sourcegraph-amp,0.0.1791187719-g319a37,yes,yes,yes,yes,yes,no,partial,no,yes,yes,yes,yes,yes,yes
 Tabnine,tabnine,v6.6.8,partial,partial,yes,partial,partial,partial,partial,partial,partial,yes,partial,partial,partial,yes
+Trae,trae,"TraeCode v3.5.91 (newest entry in the product changelog, covering v3.5.89 ~ v3.5.91; changelog page last updated 2026-08-21, checked 2026-10-06)",yes,partial,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,unknown,yes
+v0,v0,no published version identifier (checked 2026-10-06),partial,no,yes,no,yes,partial,yes,yes,yes,no,partial,yes,yes,yes
 Vibe,vibe,v2.25.8,yes,partial,yes,partial,yes,partial,partial,yes,yes,yes,yes,yes,yes,yes
+Void,void,v1.3.4,no,no,yes,no,no,partial,yes,no,partial,yes,yes,yes,yes,no
+Warp,warp,v0.2026.09.30.08.29,yes,yes,yes,partial,yes,partial,yes,yes,yes,no,yes,partial,yes,yes
 Windsurf,windsurf,3.10.48,yes,partial,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes,yes
 Zed,zed,v1.22.0,yes,partial,yes,no,yes,partial,yes,no,yes,no,yes,yes,yes,partial

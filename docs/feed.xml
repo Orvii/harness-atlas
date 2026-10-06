@@ -7,6 +7,12 @@
   <updated>2026-10-06T00:00:00Z</updated>
   <author><name>Orvii</name></author>
   <entry>
+    <title>v3.5: thirty-seven harnesses — the platform vendors arrive</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/v3-5-thirty-seven-harnesses-the-platform-vendors</id>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <content type="html">Added Seven rows: **Warp** (terminal-native agent; client is AGPL-3.0 and public at `warpdotdev/warp`; per-action autonomy profiles; orchestration explicitly one level deep; Agent Memory research-preview), **Trae** (ByteDance&#x27;s VS Code-fork IDE plus a separate VS Code/JetBrains plugin product; opt-in sandbox whose allowlist bypasses it, and an Auto-Run mode the docs say &quot;bypasses all security checks&quot;; SOLO Spec/Plan workflows pause for confirmation), **Google Antigravity** (default-on OS sandbox from Linux kernel namespaces and macOS Seatbelt/SBPL, no VMs or containers; `~/.ssh` and `.env` blocked; Deny &gt; Ask &gt; Allow precedence engine; plugin.json marketplace), **Qoder** (Alibaba; 14/14 capabilities documented as yes — the first row to do so without a partial; three access-permission modes, selectable execution environments incl. isolated git worktrees), **Lovable** and **v0** (web-native builders joining Bolt and Replit — IDEs connect *to* them via MCP rather than the reverse, so `ide_integration` is `no` on the Zed precedent; v0&#x27;s VM-backed chats run inside a Vercel Sandbox), **Void** (open source, archived, README opens &quot;Void is now deprecated&quot;; below the capability floor because the project stopped, not because it was designed narrow). `scripts/fetch-trae-docs.py` — Trae&#x27;s docs are a client-side SPA with no `llms.txt`, no `sitemap.xml`, no `.md` variants and no content API: all four return the same 287 KB app shell. The script reads the server-rendered payload the SPA embeds (`window._ROUTER_DATA…docDetail.content`, a component tree of Quill deltas) and flattens it to text, so the row stays reproducible by anyone. `SYNTHESIS.md` §11 — the floor is what a platform vendor ships on day one; documentation architecture became a research variable; Warp breaks the closed-source expectation; the web-native cluster inverts the `ide_integration` axis. `GATES.md` — Trae&#x27;s Auto-Run added to the eighth kind (the gate that opens under automation), now five rows deep. `TRUST.md` — seven rows; Antigravity and Qoder recorded as *partial* on the model-review column with the reason stated (their docs do not say whether the reviewer is a model or a rule engine).</content>
+  </entry>
+  <entry>
     <title>full-audit link-rot pass: Qodo repaired, cited-as-dead class recognized</title>
     <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/full-audit-link-rot-pass-qodo-repaired-cited-as-</id>
     <updated>2026-10-06T00:00:00Z</updated>
@@ -59,11 +65,5 @@
     <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v3-17-harnesses-deep-sections-trust-precedence-c</id>
     <updated>2026-10-05T00:00:00Z</updated>
     <content type="html">Added `harnesses/` pages for crush, amazon-q-developer-cli, vibe (batch 3, full capability + deep pass) Deep-dive sections on all pages: architecture, context management, ecosystem, governance, limitations, quotes, sources (research runs wf_15cd0c06, wf_3decfb86) `TRUST.md` — three-layer trust model (OS sandbox / prompts / model review), default postures per harness `scripts/drift-check.sh` — mechanical version-pin freshness report; multi-stream release tags handled (Qwen CLI vs sdk), nightlies excluded `scripts/link-rot.sh` — evidence-URL rot checker; dead (404/410) vs bot-gated (403/429) separated; first run: 235 URLs, 232 ok, 0 dead</content>
-  </entry>
-  <entry>
-    <title>v1: 10 harnesses x 14 capabilities</title>
-    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v1-10-harnesses-x-14-capabilities</id>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <content type="html">Added Research run wf_d9fe5bfc: one researcher per harness, official docs only, per-cell evidence URL + verbatim quote, release-tag version pins `matrix.md`, `matrix.yaml`, `harnesses/*.md`, `SYNTHESIS.md`, `METHODOLOGY.md`, `hero.svg`</content>
   </entry>
 </feed>

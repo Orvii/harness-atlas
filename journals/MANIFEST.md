@@ -18,3 +18,4 @@ see here is exactly what the pages were compiled from.
 | [wf_bf7ccd99-1e2.jsonl](wf_bf7ccd99-1e2.jsonl) | 3 | wave 4 — Sourcegraph Amp, Factory Droid, JetBrains Junie |
 | [wf_7fea83f9-209.jsonl](wf_7fea83f9-209.jsonl) | 5 | wave 5 — Cursor, Windsurf, Google Jules, Amazon Kiro, Devin |
 | [wf_v34-incoming.jsonl](wf_v34-incoming.jsonl) | 5 | wave 6 — Augment Code, Tabnine, Replit Agent, Qodo, Bolt (independent researchers, merged via merge-incoming.py) |
+| [wf_v35-incoming.jsonl](wf_v35-incoming.jsonl) | 7 | wave 7 — Warp, Trae, Google Antigravity, Qoder, Lovable, v0, Void (independent researchers, merged via merge-incoming.py; Trae read via scripts/fetch-trae-docs.py because its docs are a JS-only SPA) |
