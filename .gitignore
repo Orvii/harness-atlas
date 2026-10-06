@@ -1,1 +1,3 @@
 journals-incoming/
+__pycache__/
+*.pyc

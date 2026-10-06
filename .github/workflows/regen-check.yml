@@ -13,6 +13,9 @@ on:
       - "matrix.yaml"
       - "journals/**"
       - "scripts/generate.py"
+      - "scripts/build_site.py"
+      - "docs/**"
+      - "CHANGELOG.md"
   pull_request:
     paths:
       - "harnesses/**"
@@ -20,6 +23,9 @@ on:
       - "matrix.yaml"
       - "journals/**"
       - "scripts/generate.py"
+      - "scripts/build_site.py"
+      - "docs/**"
+      - "CHANGELOG.md"
 
 permissions:
   contents: read
@@ -41,13 +47,11 @@ jobs:
           spec = importlib.util.spec_from_file_location("gen", "scripts/generate.py")
           gen = importlib.util.module_from_spec(spec)
           spec.loader.exec_module(gen)
-          # wave order: later waves win on conflicts (see journals/MANIFEST.md)
-          order = ["wf_d9fe5bfc-a50", "wf_15cd0c06-541", "wf_3decfb86-b1b",
-                   "wf_bf7ccd99-1e2", "wf_7fea83f9-209", "wf_v34-incoming"]
-          extra = sorted(p.name for p in Path("journals").glob("*.jsonl")
-                         if p.stem not in order)
-          gen.main([f"journals/{n}.jsonl" for n in order] +
-                   [f"journals/{n}" for n in extra], Path("/tmp/regen"))
+          # generate.py sorts by the wave order MANIFEST.md declares, so the
+          # glob is safe — do NOT re-hardcode the list here, it rots every wave
+          journals = sorted(str(p) for p in Path("journals").glob("*.jsonl"))
+          gen.main(journals, Path("/tmp/regen"),
+                   manifest=Path("journals/MANIFEST.md"))
           PY
 
       - name: diff pages against regenerated output
@@ -66,3 +70,16 @@ jobs:
             fail=1
           fi
           exit $fail
+
+      - name: site must equal a fresh build from the committed pages
+        run: |
+          # docs/ is committed build output: build_site.py reads matrix.yaml +
+          # harnesses/*.md + CHANGELOG.md. Combined with the step above, this
+          # closes the chain site == pages == journals — a data fix that forgets
+          # the site rebuild now fails here instead of shipping a stale grid.
+          python3 scripts/build_site.py
+          if ! git diff --quiet docs/; then
+            echo "::error file=docs/::site drifted from the committed pages — run scripts/build_site.py and commit docs/"
+            git diff --stat docs/
+            exit 1
+          fi
