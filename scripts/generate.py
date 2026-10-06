@@ -79,7 +79,7 @@ def sanitize(text):
 def load(journals: list) -> list:
     merged = {}
     for journal in journals:
-        for line in Path(journal).read_text().splitlines():
+        for line in Path(journal).read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             m = json.loads(line)
@@ -156,8 +156,31 @@ def main(journals: list, out: Path) -> None:
         if r.get("surprises"):
             lines += ["", "## Notable", "", r["surprises"]]
         if r.get("docs_map"):
-            lines += ["", "## Sources fetched", ""] + [f"- {u}" for u in r["docs_map"]]
-        (out / "harnesses" / f"{s}.md").write_text("\n".join(lines) + "\n")
+            # `docs_map` is a list of URLs in 23 of 25 journals, but two
+            # (Continue, Zed) recorded it as ONE string in the researcher's own
+            # shape: a prose prefix, then entries separated by ` | `, each an
+            # URL optionally followed by a parenthesized label. Iterating a
+            # string yields its CHARACTERS, so those two pages rendered their
+            # "Sources fetched" list one character per line — and because
+            # regeneration reproduced the corruption byte-identically, the
+            # drift gate stayed green on it. Normalize both shapes to one
+            # entry per source.
+            docs = r["docs_map"]
+            if isinstance(docs, str):
+                parts = [part.strip() for part in docs.split(" | ") if part.strip()]
+                urls = []
+                for part in parts:
+                    # The first chunk carries prose that may itself CONTAIN a
+                    # URL reference before the real first source
+                    # ("…per https://zed.dev/docs/llms.txt): https://…"): take
+                    # the LAST `http` in the chunk, so the cited source wins
+                    # over its mention in the prefix.
+                    at = part.rfind("http")
+                    urls.append(part[at:] if at > 0 else part)
+            else:
+                urls = [str(u) for u in docs]
+            lines += ["", "## Sources fetched", ""] + [f"- {u}" for u in urls]
+        (out / "harnesses" / f"{s}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     # matrix.md
     md = ["# Capability matrix", "", f"Symbols: {' / '.join(f'{v} {k}' for k, v in SYMBOL.items())}. Cell links to the harness page.", ""]
@@ -172,12 +195,12 @@ def main(journals: list, out: Path) -> None:
             sym = SYMBOL[f["supported"]] if f else "?"
             cells.append(f"[{sym}]({f'harnesses/{s}.md'})" if f else sym)
         md.append(f"| [{r['harness']}](harnesses/{s}.md) | " + " | ".join(cells) + " |")
-    (out / "matrix.md").write_text("\n".join(md) + "\n")
+    (out / "matrix.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 
     # matrix.yaml — as_of is a property of the research snapshot, not of the
     # run: carry the committed value forward so a regenerate is byte-stable
     src_yaml = Path(__file__).resolve().parent.parent / "matrix.yaml"
-    m = re.search(r'^as_of: "?(\d{4}-\d{2}-\d{2})"?', src_yaml.read_text(), re.M) if src_yaml.exists() else None
+    m = re.search(r'^as_of: "?(\d{4}-\d{2}-\d{2})"?', src_yaml.read_text(encoding="utf-8"), re.M) if src_yaml.exists() else None
     as_of = m.group(1) if m else "unknown"
     y = ["# machine-readable matrix; regenerate with scripts/generate.py", f"as_of: {as_of}", "harnesses:"]
     for r in rows:
@@ -190,12 +213,12 @@ def main(journals: list, out: Path) -> None:
         for fid, _ in FEATURES:
             f = feats.get(fid)
             y.append(f"      {fid}: {json.dumps(f['supported']) if f else '\"unknown\"'}")
-    (out / "matrix.yaml").write_text("\n".join(y) + "\n")
+(out / "matrix.yaml").write_text("\n".join(y) + "\n", encoding="utf-8")
 
     # matrix.csv — the same grid for spreadsheet people: one row per harness,
     # one column per capability, verdict words (not symbols)
     import csv
-    with (out / "matrix.csv").open("w", newline="") as fh:
+    with (out / "matrix.csv").open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["harness", "id", "version"] + [fid for fid, _ in FEATURES])
         for r in rows:
