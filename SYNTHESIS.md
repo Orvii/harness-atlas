@@ -4,7 +4,7 @@ As of 2026-10-06 (v3.4: 30 harnesses). Every claim below traces to a harness pag
 
 ## 1. The capability floor has moved
 
-Two years ago "the agent runs commands for you" was the feature. Now the floor is: subagents, lifecycle hooks, skills, session resume, background tasks. Eight of ten harnesses ship at least eleven of the fourteen capabilities we tracked. The differentiators left are **orchestration depth** (scripted multi-agent runs vs. ad-hoc fan-out) and **where the trust boundary sits** (OS sandbox vs. permission prompts vs. a second model reviewing actions).
+Two years ago "the agent runs commands for you" was the feature. Now the floor is: subagents, lifecycle hooks, skills, session resume, background tasks. Twenty-four of thirty harnesses ship at least eleven of the fourteen capabilities we tracked — and the six that do not are not laggards, they are a different kind of product: **Aider** predates the whole convention stack; **Amazon Q CLI** and **Google Jules** are being superseded or were born narrow; and **Qodo**, **Bolt** and **Replit Agent** (v3.4) do not own the loop at all — Qodo reviews inside someone else's agent, Bolt and Replit run the loop in a hosted environment whose surfaces they document only halfway. The capability floor is now a *category* boundary, not a maturity ladder. The differentiators left are **orchestration depth** (scripted multi-agent runs vs. ad-hoc fan-out) and **where the trust boundary sits** (OS sandbox vs. permission prompts vs. a second model reviewing actions).
 
 ## 2. The ecosystem is eating itself — politely
 
