@@ -65,7 +65,13 @@ def load_yaml():
             continue
         if cur is None:
             continue
-        m = re.match(r'    (name|repo|version): "(.*)"\s*$', line)
+        # Capture the QUOTES with the scalar and hand the whole literal to yq():
+        # `"(.*)"` used to strip them first, so yq's `startswith('"')` branch
+        # was unreachable and its escape handling dead — YAML's JSON-style
+        # escapes (em-dash separators, `\"`) shipped into the site payload as
+        # literal backslash-u text in six scalars, one of them the rendered
+        # factory-droid version chip.
+        m = re.match(r'    (name|repo|version): (".*")\s*$', line)
         if m:
             data[cur][m.group(1)] = yq(m.group(2))
             continue
