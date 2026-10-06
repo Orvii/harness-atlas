@@ -1,6 +1,6 @@
 # Gates — the layer between "documented" and "shipped"
 
-As of 2026-10-05. Capability rows answer "does the doc describe it?". This page answers the next question: **behind what gate?** A feature can be documented, real, and still unreachable without a flag, a plan tier, an OS, or a prayer. Sources: the limitations notes on each harness page.
+As of 2026-10-06. Capability rows answer "does the doc describe it?". This page answers the next question: **behind what gate?** A feature can be documented, real, and still unreachable without a flag, a plan tier, an OS, or a prayer. Sources: the limitations notes on each harness page.
 
 ## The gate types we found
 
@@ -20,7 +20,7 @@ v3.3's cloud-autonomous rows add a gate the local rows never had: **the loop is 
 
 ## A sixth kind: the closed-source gate
 
-Eight rows now have no public product repo — v3.2's **Sourcegraph Amp**, **Factory Droid**, **JetBrains Junie** plus v3.3's **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro**, **Devin** — so their gates cannot be checked against code. Two consequences the open rows do not have:
+Ten rows now have no public product repo — v3.2's **Sourcegraph Amp**, **Factory Droid**, **JetBrains Junie**, v3.3's **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro**, **Devin**, and v3.4's **Replit** and **Mistral Vibe** (the latter's repository returns 404) — so their gates cannot be checked against code. Two consequences the open rows do not have:
 
 - **The gate's implementation is unreadable.** Droid documents kernel-level isolation (Seatbelt; bubblewrap+seccomp; a domain-allowlist egress proxy) and Junie documents an OS-level `/sandbox`, but neither profile is in a repo you can read. The gate is a vendor assertion.
 - **Deprecation arrives without a diff.** Amp's stated posture is "no backward compatibility": features are removed and announced in a chronicle post. A capability cell for a closed product should be treated as having a shorter half-life than an identical-looking cell for an open one, even on the same snapshot date.

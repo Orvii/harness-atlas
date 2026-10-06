@@ -6,7 +6,7 @@
 # harness-atlas
 
 [![release](https://img.shields.io/github/v/release/Orvii/harness-atlas?color=FE9106&label=release&style=flat-square)](https://github.com/Orvii/harness-atlas/releases)
-[![snapshot](https://img.shields.io/badge/snapshot-2026--10--05-FEAF12?style=flat-square)](https://github.com/Orvii/harness-atlas/blob/main/matrix.yaml)
+[![snapshot](https://img.shields.io/badge/snapshot-2026--10--06-FEAF12?style=flat-square)](https://github.com/Orvii/harness-atlas/blob/main/matrix.yaml)
 [![drift CI](https://img.shields.io/github/actions/workflow/status/Orvii/harness-atlas/drift.yml?style=flat-square&label=drift%20CI)](https://github.com/Orvii/harness-atlas/actions/workflows/drift.yml)
 [![site](https://img.shields.io/badge/site-live-F05F03?style=flat-square)](https://orvii.github.io/harness-atlas/)
 
