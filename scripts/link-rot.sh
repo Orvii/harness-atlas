@@ -1,57 +1,85 @@
 #!/usr/bin/env bash
-# Check every evidence URL in harnesses/*.md for rot. Appends a dated report
-# to reports/link-rot.md. Distinguishes dead (404/410) from blocked (403/429)
-# and redirected (3xx followed) — only dead links are failures.
+# Check every URL on every harness page for rot. Appends a dated report to
+# reports/link-rot.md. Two link classes carry different weight:
+#
+#   claim-bearing — [src](url) evidence links, quote attributions, parenthetical
+#                   citations in prose sections, version-pin sources. A 404 here
+#                   means a verdict can no longer be traced: contract violation.
+#   provenance    — the "Sources fetched" navigation log at the foot of each
+#                   page, which legitimately includes paths that were already
+#                   404 when the researcher probed them. Reported, never failed.
+#
+# Extracts ALL http(s) URLs on the page (markdown-linked AND bare), so a
+# parenthetical prose citation cannot slip through the way it did before this
+# script's 2026-10-06 rewrite — the old markdown-only regex missed the exact
+# dead link (replitai/plan-vs-build-mode) that a manual audit had just caught.
+#
+# Exit codes: 0 = no claim-bearing dead links; 2 = at least one (CI gates on
+# this AFTER committing the report, so the evidence lands even on red runs).
 # Usage: scripts/link-rot.sh   (read-only against the web, writes one report)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p reports
 
 python3 - <<'PY'
-import re, subprocess, datetime, collections
+import re, subprocess, datetime, collections, glob, sys
+from concurrent.futures import ThreadPoolExecutor
 
-urls = []
-seen = set()
-for page in sorted(__import__('glob').glob("harnesses/*.md")):
-    for m in re.finditer(r"\]\((https?://[^)\s]+)\)", open(page).read()):
-        u = m.group(1)
-        if u not in seen:
-            seen.add(u)
-            urls.append((page, u))
+URL_RE = re.compile(r"https?://[^\s)\]>,\"']+")
+SPLIT = "## Sources fetched"
 
-status = collections.Counter()
-dead, blocked = [], []
-for page, u in urls:
+# url -> [cls, page]; claim outranks provenance when the same URL appears in both
+found = {}
+for page in sorted(glob.glob("harnesses/*.md")):
+    text = open(page, encoding="utf-8").read()
+    at = text.find(SPLIT)
+    head, tail = text[:at], text[at:]
+    for chunk, cls in ((head, "claim"), (tail, "provenance")):
+        for m in URL_RE.finditer(chunk):
+            u = m.group(0).rstrip(".;:")
+            prev = found.get(u)
+            if prev is None or (prev[0] == "provenance" and cls == "claim"):
+                found[u] = [cls, page]
+
+def check(item):
+    u, (cls, page) = item
     try:
         r = subprocess.run(
             ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "-L",
-             "--max-time", "20", "-A", "orvii-atlas-linkcheck/1.0", u],
+             "--max-time", "20", "-A", "orvii-atlas-linkcheck/1.1", u],
             capture_output=True, text=True, timeout=30)
         code = r.stdout.strip()
     except Exception:
         code = "ERR"
-    if code in ("404", "410"):
-        status["dead"] += 1
-        dead.append((page, u, code))
-    elif code in ("403", "429"):
-        status["blocked"] += 1
-        blocked.append((page, u, code))
-    elif code.startswith("2"):
-        status["ok"] += 1
-    else:
-        status[f"other:{code}"] += 1
+    return (u, cls, page, code)
 
+with ThreadPoolExecutor(max_workers=4) as ex:
+    results = list(ex.map(check, found.items()))
+
+status = collections.Counter()
+dead_claim, dead_prov, blocked = [], [], []
+for u, cls, page, code in results:
+    status[f"{cls}:{'dead' if code in ('404','410') else 'blocked' if code in ('403','429') else 'ok' if code.startswith('2') else 'other:'+code}"] += 1
+    if code in ("404", "410"):
+        (dead_claim if cls == "claim" else dead_prov).append((page, u, code))
+    elif code in ("403", "429"):
+        blocked.append((cls, page, u, code))
+
+n_claim = sum(1 for v in found.values() if v[0] == "claim")
 out = [f"## {datetime.date.today().isoformat()}",
-       f"checked {len(urls)} unique evidence urls · " +
+       f"checked {len(found)} unique urls — {n_claim} claim-bearing, "
+       f"{len(found)-n_claim} provenance · " +
        " · ".join(f"{k}: {v}" for k, v in sorted(status.items()))]
-if dead:
-    out.append("")
-    out.append("### dead")
-    out += [f"- {p}: {u} ({c})" for p, u, c in dead]
+if dead_claim:
+    out += ["", "### dead — claim-bearing (contract violations: fix by re-pointing)"]
+    out += [f"- {p}: {u} ({c})" for p, u, c in dead_claim]
+if dead_prov:
+    out += ["", "### dead — provenance (navigation log; recorded, not failures)"]
+    out += [f"- {p}: {u} ({c})" for p, u, c in dead_prov]
 if blocked:
-    out.append("")
-    out.append("### blocked (bot-gated, not dead)")
-    out += [f"- {p}: {u} ({c})" for p, u, c in blocked]
-open("reports/link-rot.md", "a").write("\n".join(out) + "\n\n")
+    out += ["", "### blocked (bot-gated, not dead)"]
+    out += [f"- [{cls}] {p}: {u} ({c})" for cls, p, u, c in blocked]
+open("reports/link-rot.md", "a", encoding="utf-8").write("\n".join(out) + "\n\n")
 print("\n".join(out))
+sys.exit(2 if dead_claim else 0)
 PY

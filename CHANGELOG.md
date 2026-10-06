@@ -2,6 +2,10 @@
 
 ## [2026-10-06] - wave 6 link-rot repair: twelve moved evidence URLs re-pointed
 
+### Added
+- `scripts/link-rot.sh` rewrite — checks **every** URL on every page (markdown-linked and bare), split into two classes: claim-bearing (evidence links, prose citations, quote attributions — a dead one exits non-zero and fails the monthly drift CI, report still commits first) and provenance ("Sources fetched" navigation logs — dead entries reported, not failed). The old markdown-only regex could not see parenthetical prose citations; the wave-6 audit found a dead one (`replitai/plan-vs-build-mode`) in exactly that blind spot.
+- `drift.yml` — gate step after the report commit: dead claim-bearing URLs now turn the monthly run red instead of accumulating silently in the report.
+
 ### Modified
 - `journals/wf_v34-incoming.jsonl` (and the gitignored `journals-incoming/` sources) — eleven vendor doc pages that moved between the research run and publication, plus one prose citation, re-pointed to their live canonical URLs: Augment `cli/agents`→`cli/subagents`, `cli/integrations-and-mcp`→`cli/integrations`, `cosmos/sessions`→`cosmos/sessions-overview`, `cosmos/understanding-automation`→`cosmos/automations`, `setup-augment/install-augment-for-{vscode,jetbrains}`→ the live IDE-setup paths; Replit `features/agent/task-system`→`core-concepts/agent/task-system`, `replitai/build-in-parallel`→`learn/build-in-parallel`, `replitai/mcp`→`chat/connect-through-mcp`, `billing/managing-your-spend`→`billing/managing-spend`, `replitai/plan-vs-build-mode`→`learn/plan-vs-build-mode`; Bolt `integrations/github`→`integrations/git`.
 - `harnesses/{augment-code,replit-agent,bolt}.md` regenerated — verdicts and notes unchanged, only the citation URLs moved.

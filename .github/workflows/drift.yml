@@ -19,10 +19,16 @@ jobs:
           mkdir -p reports
           { echo "## $(date -u +%F)"; ./scripts/drift-check.sh; echo; } >> reports/drift-log.md
       - name: run link-rot check
-        run: ./scripts/link-rot.sh
+        run: ./scripts/link-rot.sh || echo $? > /tmp/link-rot-rc
       - name: commit reports if changed
         run: |
           git config user.name "orvii-bot"
           git config user.email "bot@orvii.local"
           git add reports/
           git diff --cached --quiet || { git commit -m "chore(atlas): monthly drift + link-rot reports"; git push; }
+      - name: fail if any claim-bearing evidence URL is dead
+        run: |
+          if [ -f /tmp/link-rot-rc ]; then
+            echo "::error::dead claim-bearing URLs — see reports/link-rot.md (committed above)"
+            exit "$(cat /tmp/link-rot-rc)"
+          fi
