@@ -312,14 +312,14 @@ TEMPLATE = r"""<!doctype html>
 <style>
 :root {
   --bg: #0b0806; --bg2: #100b07; --panel: #140d08; --panel2: #1c130b; --ink: #F8F5F2;
-  --muted: #b7a496; --faint: #6e5c50; --line: #3a2c1e;
+  --muted: #b7a496; --faint: #8a7a6a; --line: #3a2c1e;
   --accent: #FE9106; --accent2: #FEAF12; --accent3: #F05F03;
   --yes: #FE9106; --partial: #FEAF12; --no: #5c4c3f; --unknown: #6e5c50;
 }
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f4efe6; --bg2: #ece4d6; --panel: #fbf8f2; --panel2: #efe7d9; --ink: #1d150c;
-    --muted: #6e5c50; --faint: #9a8877; --line: #d8cbb8;
+    --muted: #6e5c50; --faint: #75655a; --line: #d8cbb8;
     --yes: #c96c00; --partial: #a37300; --no: #b3a493; --unknown: #9a8877;
   }
 }
