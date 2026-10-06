@@ -30,6 +30,11 @@ body {
   font-size: 14px; line-height: 1.55;
 }
 ::selection { background: var(--accent); color: #0b0806; }
+.skip {
+  position: absolute; left: -9999px; top: 0; background: var(--accent);
+  color: #0b0806; padding: 8px 14px; z-index: 60; text-decoration: none;
+}
+.skip:focus { left: 8px; top: 8px; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
 
 /* ---- masthead: a broadsheet head, not a landing hero ---- */
