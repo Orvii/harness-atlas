@@ -7,6 +7,12 @@
   <updated>2026-10-06T00:00:00Z</updated>
   <author><name>Orvii</name></author>
   <entry>
+    <title>full-audit link-rot pass: Qodo repaired, cited-as-dead class recognized</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/full-audit-link-rot-pass-qodo-repaired-cited-as-</id>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <content type="html">Modified `journals/wf_v34-incoming.jsonl` — the first full two-class audit (636 claim-bearing URLs across all six waves, previously only markdown-linked forms were checked) found two genuinely dead Qodo prose citations: `code-review/trigger-a-code-review` → `install-qodo/install` (its installation matrix carries the platform list the sentence claims, and the sentence now names the platforms the live page names: Bitbucket Cloud and Data Center, Azure DevOps) and `agentic-toolbox/manage-standards` → `…/manage-standards-skill`. Verdicts unchanged. `scripts/link-rot.sh` — third URL class: **cited-as-dead**. A note may cite a URL precisely because it 404s (&quot;the architecture page returned HTTP 404&quot; — Aider; &quot;docs frozen&quot; — Continue; &quot;legacy slug&quot; — Sourcegraph Amp). The checker detects the 404 predication in the clause immediately following each URL (bounded by the next URL, a newline, or 60 characters), skips the request, and reports the citation separately. Without this, the gate would flag the atlas&#x27;s most honest cells — deprecation documentation — as contract violations. The locality bound matters: one Amp sentence cites the dead legacy slug *and* the live replacement docs home in the same breath; window- and sentence-wide heuristics both misclassified the live URL, suppressing its check (caught by comparing run 2&#x27;s 84 cited-as-dead against the 3 URLs any note actually calls dead). Added `reports/link-rot.md` — first full-audit run: 1116 unique URLs, claim/provenance/cited-as-dead separated.</content>
+  </entry>
+  <entry>
     <title>wave 6 link-rot repair: twelve moved evidence URLs re-pointed</title>
     <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/wave-6-link-rot-repair-twelve-moved-evidence-url</id>
     <updated>2026-10-06T00:00:00Z</updated>
