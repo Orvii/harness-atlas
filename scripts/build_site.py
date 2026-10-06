@@ -168,6 +168,41 @@ def tag_history():
     return hist
 
 
+def build_feed(as_of: str) -> str:
+    """Atom feed from the CHANGELOG — feed readers and newsletter scanners
+    discover releases here; the entries are the changelog's own words."""
+    import html as htmllib
+    entries = []
+    cur = None
+    for line in (ROOT / "CHANGELOG.md").read_text().splitlines():
+        m = re.match(r"^## \[(\d{4}-\d{2}-\d{2})\] - (.+)$", line)
+        if m:
+            cur = {"date": m.group(1), "title": m.group(2), "body": []}
+            entries.append(cur)
+            continue
+        if cur is not None and line.strip():
+            cur["body"].append(line.strip().lstrip("-# ").strip())
+    xml = ['<?xml version="1.0" encoding="utf-8"?>',
+           '<feed xmlns="http://www.w3.org/2005/Atom">',
+           '  <title>harness-atlas — data snapshots</title>',
+           '  <id>https://orvii.github.io/harness-atlas/</id>',
+           '  <link href="https://orvii.github.io/harness-atlas/feed.xml" rel="self"/>',
+           '  <link href="https://orvii.github.io/harness-atlas/"/>',
+           f'  <updated>{as_of}T00:00:00Z</updated>',
+           '  <author><name>Orvii</name></author>']
+    for e in entries[:10]:
+        body = htmllib.escape(" ".join(e["body"][:6]))
+        slug = re.sub(r"[^a-z0-9]+", "-", e["title"].lower()).strip("-")[:48]
+        xml += ['  <entry>',
+                f'    <title>{htmllib.escape(e["title"])}</title>',
+                f'    <id>tag:github.com,2026:Orvii/harness-atlas/{e["date"]}/{slug}</id>',
+                f'    <updated>{e["date"]}T00:00:00Z</updated>',
+                f'    <content type="html">{body}</content>',
+                '  </entry>']
+    xml.append('</feed>')
+    return "\n".join(xml) + "\n"
+
+
 def main():
     order, data = load_yaml()
     pages = load_pages()
@@ -209,6 +244,7 @@ def main():
     payload = {"as_of": as_of, "version": version, "caps": CAPS,
                "cap_label": CAP_LABEL, "harnesses": harnesses}
     html = TEMPLATE.replace("__DATA__", json.dumps(payload, ensure_ascii=False))
+    html = html.replace("__COUNT__", str(len(harnesses)))
     html = html.replace("__JSONLD__", json.dumps({
         "@context": "https://schema.org",
         "@type": "Dataset",
@@ -235,6 +271,7 @@ def main():
                                       .replace("__VERSION__", version)
                                       .replace("__N__", str(len(harnesses))))
     (SITE / ".nojekyll").write_text("")
+    (SITE / "feed.xml").write_text(build_feed(as_of))
     print(f"wrote {SITE.relative_to(ROOT)}/index.html ({len(html)//1024} KB) — {len(harnesses)} harnesses, {len(CAPS)} capabilities, as of {as_of}")
     missing = sum(1 for h in harnesses for c in h["caps"] if c["support"] != "unknown" and not c["evidence"])
     if missing:
@@ -248,7 +285,8 @@ TEMPLATE = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>harness-atlas — the capability grid, clickable</title>
-<meta name="description" content="What 25 AI coding harnesses promise and support. Every cell opens the note and the fetched-doc URL it was read from. Versions pinned, snapshot dated.">
+<meta name="description" content="What __COUNT__ AI coding harnesses promise and support. Every cell opens the note and the fetched-doc URL it was read from. Versions pinned, snapshot dated.">
+<link rel="alternate" type="application/atom+xml" title="harness-atlas data snapshots" href="./feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -501,7 +539,7 @@ footer p { max-width: 80ch; }
   <div>
     <p class="eyebrow">Orvii research set · evidence-contract atlas</p>
     <h1>What coding agents <em>promise</em> — and what they <em>support</em>.</h1>
-    <p class="lede">Twenty-five harnesses, fourteen capabilities, one snapshot date. <b>Click any cell</b>: it opens the note and the fetched-doc URL the verdict was read from. A cell you cannot trace does not exist here — it is marked <span aria-label="unknown">?</span>.</p>
+    <p class="lede"><span id="lede-n"></span> harnesses, fourteen capabilities, one snapshot date. <b>Click any cell</b>: it opens the note and the fetched-doc URL the verdict was read from. A cell you cannot trace does not exist here — it is marked <span aria-label="unknown">?</span>.</p>
   </div>
   <aside class="plate" aria-label="How to read the grid">
     <p class="plate-title">reading the plate</p>
@@ -594,6 +632,7 @@ const sortSel = document.getElementById("sort");
 document.getElementById("chip-date").textContent = DATA.as_of;
 document.getElementById("chip-ver").textContent = DATA.version;
 document.getElementById("chip-n").textContent = DATA.harnesses.length;
+document.getElementById("lede-n").textContent = DATA.harnesses.length;
 DATA.caps.forEach(c => {
   const o = document.createElement("option");
   o.value = c; o.textContent = DATA.cap_label[c];

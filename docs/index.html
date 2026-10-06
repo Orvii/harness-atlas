@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>harness-atlas — the capability grid, clickable</title>
 <meta name="description" content="What 25 AI coding harnesses promise and support. Every cell opens the note and the fetched-doc URL it was read from. Versions pinned, snapshot dated.">
+<link rel="alternate" type="application/atom+xml" title="harness-atlas data snapshots" href="./feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -257,7 +258,7 @@ footer p { max-width: 80ch; }
   <div>
     <p class="eyebrow">Orvii research set · evidence-contract atlas</p>
     <h1>What coding agents <em>promise</em> — and what they <em>support</em>.</h1>
-    <p class="lede">Twenty-five harnesses, fourteen capabilities, one snapshot date. <b>Click any cell</b>: it opens the note and the fetched-doc URL the verdict was read from. A cell you cannot trace does not exist here — it is marked <span aria-label="unknown">?</span>.</p>
+    <p class="lede"><span id="lede-n"></span> harnesses, fourteen capabilities, one snapshot date. <b>Click any cell</b>: it opens the note and the fetched-doc URL the verdict was read from. A cell you cannot trace does not exist here — it is marked <span aria-label="unknown">?</span>.</p>
   </div>
   <aside class="plate" aria-label="How to read the grid">
     <p class="plate-title">reading the plate</p>
@@ -350,6 +351,7 @@ const sortSel = document.getElementById("sort");
 document.getElementById("chip-date").textContent = DATA.as_of;
 document.getElementById("chip-ver").textContent = DATA.version;
 document.getElementById("chip-n").textContent = DATA.harnesses.length;
+document.getElementById("lede-n").textContent = DATA.harnesses.length;
 DATA.caps.forEach(c => {
   const o = document.createElement("option");
   o.value = c; o.textContent = DATA.cap_label[c];

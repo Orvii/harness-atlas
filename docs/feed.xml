@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>harness-atlas — data snapshots</title>
+  <id>https://orvii.github.io/harness-atlas/</id>
+  <link href="https://orvii.github.io/harness-atlas/feed.xml" rel="self"/>
+  <link href="https://orvii.github.io/harness-atlas/"/>
+  <updated>2026-10-05T00:00:00Z</updated>
+  <author><name>Orvii</name></author>
+  <entry>
+    <title>enforced reproducibility: public journals + regeneration gate</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/enforced-reproducibility-public-journals-regener</id>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <content type="html">Added `journals/` — sanitized researcher results (one JSON line each; head + enrichment lines, wave-ordered; MANIFEST.md records merge order). `python3 scripts/generate.py journals/*.jsonl` in wave order reproduces every committed page byte-identically. `scripts/export-journals.py` — exports sanitized results from workflow journals in the generator&#x27;s line shape. `.github/workflows/regen-check.yml` — regenerates pages from journals/ on data-path pushes and fails if any page or the harness set differs. Modified `scripts/generate.py` — enrichment-only results may enrich an existing row but never start one; `as_of` carried forward from the committed matrix.yaml so regeneration is byte-stable.</content>
+  </entry>
+  <entry>
+    <title>site redesign: specimen-plate layout, plate-mode grid, deep links</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/site-redesign-specimen-plate-layout-plate-mode-g</id>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <content type="html">Modified `scripts/build_site.py` — index.html rebuilt around a broadsheet masthead: two-column head with a framed &quot;reading the plate&quot; specimen (symbol key, live cell sample, snapshot ledger) replacing the chip row; legend moved out of the toolbar; toolbar gains verdict filter (rows containing ●/◐/○/?) and row sort (name a–z, most documented, most contested); compare view gains a disagreement-count summary line; grid gains a per-column census bar (yes/partial/no/unknown proportions + documented count) as a second sticky head row and two-digit row indices; every cell is deep-linkable (`#&lt;harness&gt;/&lt;capability&gt;`) with a copy-link button in the drawer; `&lt;noscript&gt;` fallback points at matrix.md. `scripts/build_site.py` — sticky-head fix: the grid is now its own scroll plate on desktop (`max-height` + `overflow: auto`), so the head pins to the plate top; on ≤980px the head goes static and the name column stays pinned. Root cause: an `overflow-x` scroll container becomes the sticky reference, which previously floated the head mid-grid on small screens. `scripts/build_site.py` — shared CSS keeps `.chips`/`.chip` for method.html; entry animation shortened to 350ms.</content>
+  </entry>
+  <entry>
+    <title>v3.3: twenty-five harnesses — the cloud-autonomous cluster</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v3-3-twenty-five-harnesses-the-cloud-autonomous-</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <content type="html">Added `harnesses/cursor.md`, `windsurf.md`, `google-jules.md`, `amazon-kiro.md`, `devin.md` — five closed-source agents incl. the first three whose loop runs server-side (Jules, Devin, Kiro cloud sessions). Version pins from npm dist-tags, vendor changelogs and API self-labels; each row says which. `SYNTHESIS.md` §9 &quot;Execution locality is now a first-class axis&quot; — the human gate relocates when the loop leaves the machine (Jules: plan approval instead of prompts; Windsurf/Devin: fail-closed sandbox); where the human left, a model was hired (Cursor Auto-review default, Jules&#x27; critic agent); `background_tasks` was conflating async with remote. `SYNTHESIS.md` §6 retitled: the compatibility chain no longer has one direction — v3.3 rows cross-read Claude/Codex/Cursor directories. `TRUST.md` five rows; prompts-floor now has two exceptions (Amp by choice, Jules by structure); cloud rows are VM-isolated by construction while local sandboxes stay opt-in. `GATES.md` seventh gate kind (locality) plus the new env/tier/OS/maturity/deprecation entries.</content>
+  </entry>
+  <entry>
+    <title>v3.2: twenty harnesses — the closed-source cluster</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v3-2-twenty-harnesses-the-closed-source-cluster</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <content type="html">Added `harnesses/sourcegraph-amp.md`, `harnesses/factory-droid.md`, `harnesses/jetbrains-junie.md` — three closed-source commercial agents, researched from vendor docs with the same evidence contract (per-cell URL + verbatim quote). Version pins come from npm `dist-tag latest`, the vendor changelog page, and the vendor what&#x27;s-new page respectively, since no release tags exist; each row says which. `SYNTHESIS.md` §8 &quot;The closed-source cluster answers differently&quot; — what changes when a pin is not a git tag, when deprecation is a policy rather than a commit, and when a trust claim is a vendor security page. `GATES.md` &quot;A sixth kind: the closed-source gate&quot; plus the new harnesses&#x27; env/tier/OS/maturity/deprecation gates in the existing five lists. `TRUST.md` rows for all three, including **Sourcegraph Amp as the first harness in the set that documents no local permission prompt at all** (&quot;By default, Amp does not ask for approval before running tools&quot;) — the universal-prompt floor now has one hole. `bench-notes`: `the-benchmark-code-is-the-result` (note 14). `equivalence-notes`: `environment-is-part-of-the-program` (note 11).</content>
+  </entry>
+  <entry>
+    <title>v3.1: gates, coverage honesty, reading guides</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v3-1-gates-coverage-honesty-reading-guides</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <content type="html">Added `GATES.md` — the layer behind documented: env/flag gates, tier gates, OS gates, maturity labels, deprecation gates README &quot;How to read a cell&quot; — partial is a verdict with a note; unknown is absence of evidence</content>
+  </entry>
+  <entry>
+    <title>v3: 17 harnesses, deep sections, trust + precedence + citation</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v3-17-harnesses-deep-sections-trust-precedence-c</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <content type="html">Added `harnesses/` pages for crush, amazon-q-developer-cli, vibe (batch 3, full capability + deep pass) Deep-dive sections on all pages: architecture, context management, ecosystem, governance, limitations, quotes, sources (research runs wf_15cd0c06, wf_3decfb86) `TRUST.md` — three-layer trust model (OS sandbox / prompts / model review), default postures per harness `scripts/drift-check.sh` — mechanical version-pin freshness report; multi-stream release tags handled (Qwen CLI vs sdk), nightlies excluded `scripts/link-rot.sh` — evidence-URL rot checker; dead (404/410) vs bot-gated (403/429) separated; first run: 235 URLs, 232 ok, 0 dead</content>
+  </entry>
+  <entry>
+    <title>v1: 10 harnesses x 14 capabilities</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-05/v1-10-harnesses-x-14-capabilities</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <content type="html">Added Research run wf_d9fe5bfc: one researcher per harness, official docs only, per-cell evidence URL + verbatim quote, release-tag version pins `matrix.md`, `matrix.yaml`, `harnesses/*.md`, `SYNTHESIS.md`, `METHODOLOGY.md`, `hero.svg`</content>
+  </entry>
+</feed>
