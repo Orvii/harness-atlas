@@ -15,6 +15,7 @@ than linking nowhere.
 """
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -121,6 +122,52 @@ def load_pages():
     return pages
 
 
+def _features_of(text: str):
+    cur, out = None, {}
+    for line in text.splitlines():
+        m = re.match(r"  - id: (\S+)", line)
+        if m:
+            cur = m.group(1)
+            out[cur] = {}
+            continue
+        if cur:
+            m = re.match(r'      (\w+): "(.*)"', line)
+            if m:
+                out[cur][m.group(1)] = m.group(2)
+    return out
+
+
+def tag_history():
+    """Per-cell verdict changes across release tags, oldest transition first.
+
+    Reads matrix.yaml out of every v* tag, so the site can show "this cell
+    moved in vX" without storing anything by hand. Empty until a second tag
+    exists — history is a property of releases, not of commits.
+    """
+    try:
+        tags = subprocess.run(["git", "tag", "--list", "v*"],
+                              capture_output=True, text=True, cwd=ROOT).stdout.split()
+    except Exception:
+        return {}
+    tags.sort(key=lambda t: [int(x) for x in re.findall(r"\d+", t)])
+    snaps = []
+    for t in tags:
+        text = subprocess.run(["git", "show", f"{t}:matrix.yaml"],
+                              capture_output=True, text=True, cwd=ROOT).stdout
+        if text:
+            snaps.append((t, _features_of(text)))
+    hist = {}
+    for (t0, f0), (t1, f1) in zip(snaps, snaps[1:]):
+        for h in sorted(set(f0) | set(f1)):
+            for cap in CAPS:
+                a = f0.get(h, {}).get(cap)
+                b = f1.get(h, {}).get(cap)
+                if a != b and (a or b):
+                    hist.setdefault(h, {}).setdefault(cap, []).append(
+                        {"v": t1, "from": a or "new", "to": b or "gone"})
+    return hist
+
+
 def main():
     order, data = load_yaml()
     pages = load_pages()
@@ -156,9 +203,29 @@ def main():
     version = re.search(r'^version: "(.+)"', (ROOT / "CITATION.cff").read_text(), re.M)
     version = version.group(1) if version else "dev"
 
+    hist = tag_history()
+    for h in harnesses:
+        h["history"] = hist.get(h["id"], {})
     payload = {"as_of": as_of, "version": version, "caps": CAPS,
                "cap_label": CAP_LABEL, "harnesses": harnesses}
     html = TEMPLATE.replace("__DATA__", json.dumps(payload, ensure_ascii=False))
+    html = html.replace("__JSONLD__", json.dumps({
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "harness-atlas — capability matrix of AI coding harnesses",
+        "description": "What " + str(len(harnesses)) + " AI coding harnesses promise "
+                       "and support: 14 capabilities per harness, every cell citing the "
+                       "vendor documentation page it was read from, version-pinned and "
+                       "snapshot-dated.",
+        "url": "https://orvii.github.io/harness-atlas/",
+        "license": "https://github.com/Orvii/harness-atlas/blob/main/LICENSE",
+        "creator": {"@type": "Organization", "name": "Orvii",
+                    "url": "https://github.com/Orvii"},
+        "dateModified": as_of,
+        "version": version,
+        "variableMeasured": [CAP_LABEL[c] for c in CAPS],
+        "measurementTechnique": "documentation review with per-cell evidence URLs",
+    }, ensure_ascii=False))
     SITE.mkdir(exist_ok=True)
     (SITE / "index.html").write_text(html)
     style = re.search(r"<style>(.*?)</style>", TEMPLATE, re.S).group(1)
@@ -185,6 +252,7 @@ TEMPLATE = r"""<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">__JSONLD__</script>
 <style>
 :root {
   --bg: #0b0806; --bg2: #100b07; --panel: #140d08; --panel2: #1c130b; --ink: #F8F5F2;
@@ -375,6 +443,7 @@ td.hot { background: color-mix(in srgb, var(--accent) 9%, transparent); }
 .drawer .meta { margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-size: 12.5px; }
 .drawer .meta a { color: var(--accent); }
 .drawer .meta .verdict { color: var(--ink); font-weight: 600; }
+.drawer .meta .hist { color: var(--faint); font-size: 11.5px; }
 .drawer .meta button {
   background: transparent; border: 1px solid var(--line); color: var(--muted);
   border-radius: 4px; padding: 3px 10px; cursor: pointer; font: inherit; font-size: 11.5px;
@@ -667,6 +736,9 @@ function openCell(h, c) {
     (c.evidence ? `<span>read from: <a href="${esc(c.evidence)}" rel="noopener noreferrer">${esc(c.evidence.replace(/^https?:\/\//, "").slice(0, 64))}</a></span>` : "<span>no evidence URL recorded — see page</span>") +
     `<span>pin: <span class="verdict">${esc(h.version.slice(0, 72))}</span></span>` +
     (h.docs ? `<span><a href="${esc(h.docs)}" rel="noopener noreferrer">docs home</a></span>` : "") +
+    (h.history && h.history[c.cap] && h.history[c.cap].length
+      ? `<span class="hist">history: ${h.history[c.cap].map(e => `${esc(e.v)}: ${SYM[e.from] || e.from} → ${SYM[e.to] || e.to}`).join(" · ")}</span>`
+      : "") +
     `<button id="d-copy">copy cell link</button>`;
   document.getElementById("d-copy").addEventListener("click", ev => {
     navigator.clipboard.writeText(location.href).then(() => {
