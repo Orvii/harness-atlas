@@ -162,9 +162,11 @@ def tag_history():
             for cap in CAPS:
                 a = f0.get(h, {}).get(cap)
                 b = f1.get(h, {}).get(cap)
-                if a != b and (a or b):
+                if a != b and a in SYM and b in SYM:
+                    # row additions/removals are not cell changes; the
+                    # changelog owns those. History is verdict movement only.
                     hist.setdefault(h, {}).setdefault(cap, []).append(
-                        {"v": t1, "from": a or "new", "to": b or "gone"})
+                        {"v": t1, "from": a, "to": b})
     return hist
 
 

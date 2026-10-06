@@ -33,7 +33,7 @@ python3 scripts/generate.py journals/wf_d9fe5bfc-a50.jsonl journals/wf_15cd0c06-
         journals/wf_7fea83f9-209.jsonl journals/wf_<wave>.jsonl
 ```
 
-Journals merge by harness slug; later files win on scalar fields, deep fields merge in. Wave order is load-bearing — append new waves to `journals/MANIFEST.md`, to the order list in `.github/workflows/regen-check.yml`, and to `release.yml`'s triggers. CI regenerates from journals/ on every data-path push and fails on any difference, so a page and its journal can never disagree. Then update `SYNTHESIS.md` by hand — it is prose over the notable findings, and generation cannot judge it.
+Journals merge by harness slug; later files win on scalar fields, deep fields merge in. `journals-incoming/` is scratch and gitignored: once a wave is merged, the journal under `journals/` is the only record. Wave order is load-bearing — append new waves to `journals/MANIFEST.md`, to the order list in `.github/workflows/regen-check.yml`, and to `release.yml`'s triggers. CI regenerates from journals/ on every data-path push and fails on any difference, so a page and its journal can never disagree. Then update `SYNTHESIS.md` by hand — it is prose over the notable findings, and generation cannot judge it.
 
 ## What we will not accept
 

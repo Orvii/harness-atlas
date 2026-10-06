@@ -43,7 +43,7 @@ jobs:
           spec.loader.exec_module(gen)
           # wave order: later waves win on conflicts (see journals/MANIFEST.md)
           order = ["wf_d9fe5bfc-a50", "wf_15cd0c06-541", "wf_3decfb86-b1b",
-                   "wf_bf7ccd99-1e2", "wf_7fea83f9-209"]
+                   "wf_bf7ccd99-1e2", "wf_7fea83f9-209", "wf_v34-incoming"]
           extra = sorted(p.name for p in Path("journals").glob("*.jsonl")
                          if p.stem not in order)
           gen.main([f"journals/{n}.jsonl" for n in order] +

@@ -12,7 +12,7 @@
 
 What AI coding harnesses **promise** — and what they **support** — with a version pin and a fetched-doc citation on every cell.
 
-Twenty-five harnesses, fourteen capabilities, one snapshot date: **2026-10-05**.
+Thirty harnesses, fourteen capabilities, one snapshot date: **2026-10-06**.
 
 | | |
 |---|---|
@@ -47,8 +47,22 @@ One column needs a caveat: `sandboxing` in this grid asks *does the harness boun
 
 Take `sandboxing ◐` on some row. It means: on the cited date, the cited doc page documented sandboxing **with a stated limitation** — and the note in that row's capability table says which limitation (off by default, platform-restricted, experimental). `◐` is never a hedge: the note is the verdict's second half. A `?` means the researcher could not fetch a page that answers the question — absence of evidence, recorded as such, never guessed.
 
+## Cite
+
+Cite the release, not the date — cells move as vendors ship. Metadata lives in [CITATION.cff](CITATION.cff); for BibTeX:
+
+```bibtex
+@misc{orvii2026harnessatlas,
+  title  = {harness-atlas: capability matrix of AI coding harnesses, pinned and evidenced},
+  author = {{Orvii}},
+  year   = {2026},
+  howpublished = {\url{https://github.com/Orvii/harness-atlas}},
+  note   = {Cite the release you queried: see CITATION.cff for the current version and snapshot date. Every cell cites the vendor doc it was read from.}
+}
+```
+
 ---
 
-Orvii — Open, Research, Vision, Innovation & Ideas. Regenerate with `scripts/generate.py` against a fresh research journal; see METHODOLOGY.
+Orvii — Open, Research, Vision, Innovation & Ideas. Regenerate with `scripts/generate.py` against the public journals; see METHODOLOGY and [journals/MANIFEST.md](journals/MANIFEST.md).
 
 Part of the Orvii research set: [convention-map](https://github.com/Orvii/convention-map) · [equivalence-notes](https://github.com/Orvii/equivalence-notes) · [provider-reliability](https://github.com/Orvii/provider-reliability) · [context-file-evidence](https://github.com/Orvii/context-file-evidence) · [retractions](https://github.com/Orvii/retractions) · [svg-instruments](https://github.com/Orvii/svg-instruments) · [bench-notes](https://github.com/Orvii/bench-notes) · [ts-lto-research](https://github.com/Orvii/ts-lto-research).

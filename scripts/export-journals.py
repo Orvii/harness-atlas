@@ -29,6 +29,7 @@ WAVES = {
     "wf_3decfb86-b1b": "wave 3 — Crush, Amazon Q Developer CLI, Vibe",
     "wf_bf7ccd99-1e2": "wave 4 — Sourcegraph Amp, Factory Droid, JetBrains Junie",
     "wf_7fea83f9-209": "wave 5 — Cursor, Windsurf, Google Jules, Amazon Kiro, Devin",
+    "wf_v34-incoming": "wave 6 — Augment Code, Tabnine, Replit Agent, Qodo, Bolt (independent researchers, merged via merge-incoming.py)",
 }
 
 

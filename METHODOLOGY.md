@@ -1,5 +1,7 @@
 # Methodology
 
+`as_of` in matrix.yaml is the date of the most recent research wave; cells from earlier waves were fetched on the dates recorded in their journals (see journals/MANIFEST.md). Per-row version pins carry what was observed, when.
+
 How every cell in this atlas is produced, so you can trust it — or re-run it.
 
 ## Pipeline

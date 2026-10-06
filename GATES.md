@@ -34,3 +34,14 @@ Eight rows now have no public product repo — v3.2's **Sourcegraph Amp**, **Fac
 ## Reading rule
 
 When a cell says ✅ or ◐, check the row's limitations note for a gate. If the gate is a flag you must set, the honest sentence is "supports X when configured"; if it is a tier, "supports X for paying users"; if it is a maturity label, "supports X in preview". The atlas keeps cells binary and gates in notes on purpose: a matrix of five-valued cells would be unreadable, and the notes are where the truth fits.
+
+## An eighth kind: the gate that opens under automation
+
+v3.4's rows surface a gate failure mode the local cluster never had: **the approval gate that silently disables itself when no human is watching.**
+
+- **Tabnine CLI Plan Mode** presents a plan for approval — except in headless or CI use, where "the plan tools are auto-approved and execution switches to YOLO mode". The same product, the same flag: a gate for the human, none for the pipeline. Any benchmark or CI harness measuring Tabnine's "plan mode" is measuring YOLO.
+- **Bolt Plan Mode** lets a user review and revise a plan — but the homepage flow creates the app's base structure *before* presenting the plan, and approval before building is not documented as mandatory. The gate exists after the first irreversible act.
+- **Replit's Plan Mode** is billable: reviewing before building costs the same currency as building. A gate with a price is a gate some users will skip by arithmetic.
+- **Augment's permission rules** apply to the CLI and explicitly not to the IDE extension — the gate's coverage depends on which door you walked in through.
+
+The reading rule from §1 still holds, sharpened: when a cell says ✅ or ◐ on `plan_mode` or `sandboxing`, ask *under which invocation* the gate exists. A gate that is present interactively and absent in automation is not a control; it is a courtesy.

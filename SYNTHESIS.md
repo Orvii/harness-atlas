@@ -1,6 +1,6 @@
 # Synthesis — what the matrix actually says
 
-As of 2026-10-05 (v3.3: 25 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
+As of 2026-10-06 (v3.4: 30 harnesses). Every claim below traces to a harness page, every harness page traces to a fetched doc.
 
 ## 1. The capability floor has moved
 
@@ -59,7 +59,7 @@ Four governance facts deserve attention:
 
 ## 8. The closed-source cluster answers differently
 
-The closed-source cluster began in v3.2 with **Sourcegraph Amp**, **Factory Droid** and **JetBrains Junie**, and v3.3 more than doubled it: **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro** and **Devin** also have no public product repo. Eight of twenty-five rows now rest on vendor docs alone. That changes what a capability cell can mean.
+The closed-source cluster began in v3.2 with **Sourcegraph Amp**, **Factory Droid** and **JetBrains Junie**, and v3.3 more than doubled it: **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro** and **Devin** also have no public product repo. Nine of thirty rows now rest on vendor docs alone (v3.4 adds Replit, whose agent has no public product repository). That changes what a capability cell can mean.
 
 - **Version pins move off release tags.** For open harnesses a pin is a git tag you can check out. For these three it is whatever the vendor publishes: Amp from the npm `dist-tag latest` of `@sourcegraph/amp`, Droid from its docs changelog page, Junie from `junie.jetbrains.com/whats-new`. A pin you cannot diff is weaker evidence, and the atlas says so per row instead of hiding it.
 - **Deprecation is a policy, not a signal.** Amp states an explicit "no backward compatibility" posture and deletes unloved features (Amp Tab, custom commands replaced by skills). In an open repo that deletion is a commit you can read; here it is a chronicle post. Cells for fast-moving closed products should be treated as shorter-lived than identical-looking cells for open ones.
@@ -84,3 +84,11 @@ v3.3 adds the first harnesses whose agent loop does not run on the developer's m
 
 - **The capability grid's `background_tasks` row was doing two jobs.** It conflated *asynchronous* (the agent keeps working after you stop watching) with *remote* (the agent keeps working after you close the laptop, because it was never on it). Amp's orbs, Cursor's Cloud Agents, Jules, Devin and Kiro cloud sessions are remote; OpenCode's and Cline's background tasks are not. Read the row's note, not its symbol — and for a security decision read TRUST.md, where locality is the organizing column.
 
+## 10. v3.4: the stack is splitting — capability vendors that execute nothing
+
+Five new rows and three of them do not fit the matrix's original shape. That misfit is the finding.
+
+- **Qodo is a capability layer without an execution layer.** It ships review agents, standards enforcement, skills and an MCP surface *into whatever coding agent you already run* — Claude Code, Codex, Kiro, its own deprecated CLI's successor. Its sandboxing row is not "no": it is *not its axis*. The trust question for a Qodo-equipped setup is the host agent's trust question plus a review layer on top. The atlas has, until now, only listed harnesses that own the loop; v3.4 says the loop is becoming a platform other vendors build against.
+- **Bolt and Replit Agent are web-native: the environment is the product.** Neither documents an OS sandbox because neither documents an OS the user touches — the boundary is a hosted project environment (Replit's isolated task copies, Bolt's project security checks), and in both the human gate is *review without a documented hard approval*: Replit's Plan Mode gates file changes, Bolt's Plan Mode lets you revise a plan the homepage flow has already started building. "Plan mode" means three different strengths across these rows; the note column is the only place the difference survives.
+- **Deprecation is now a row property, not a footnote.** Tabnine's entire agent-capability surface (subagents, hooks, skills, sandbox, plan mode) is documented for a CLI the vendor calls maintenance-mode with deprecation after 2026-12-31; Qodo's own CLI is deprecated in favour of a toolbox that plugs into other agents. Two of thirty rows now carry an expiry date on the capabilities themselves. A snapshot that records the date but not the half-life of a row would be lying by omission — hence the pin's source column and this paragraph.
+- **The unknowns concentrated, and that is honest.** Bolt and Replit return `unknown` on six and five capabilities respectively — not because the research was thin (both cite 30+ fetched doc pages) but because web-native vendors document the happy path and stay silent on boundaries. Silence about a sandbox is not a sandbox. The grid keeps those cells `?`, and the pattern itself is data: *local* harnesses over-document gates; *hosted* harnesses under-document them.

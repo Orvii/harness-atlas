@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-10-06] - v3.4: thirty harnesses — the capability-vendor cluster
+
+### Added
+- Five rows: **Augment Code** (Auggie CLI + Cosmos: subagents, trigger automations, Expert memory, Git-marketplace plugins), **Tabnine** (broad CLI agent surface on a CLI the vendor calls maintenance-mode, deprecation after 2026-12-31), **Replit Agent** (cloud task system with plan-gated parallelism, no published version), **Qodo** (Agentic Toolbox: review agents and standards that plug into other agents — a capability layer with no execution layer), **Bolt** (web-native agent; plan review without a documented hard gate).
+- `SYNTHESIS.md` §10 — the stack is splitting: capability vendors that execute nothing; web-native rows where the environment is the product; deprecation as a row property; unknowns concentrating in hosted vendors.
+- `GATES.md` eighth kind — the gate that opens under automation: Tabnine's headless YOLO switch, Bolt's plan-after-first-build, Replit's billable review, Augment's CLI-only enforcement.
+- `TRUST.md` — five rows; Qodo recorded as n/a on the sandbox axis (it executes nothing); new bullet on review-layer vendors riding host agents' trust models.
+- `journals/wf_v34-incoming.jsonl` — wave 6, five independent researchers, merged via the new `scripts/merge-incoming.py` (contract-validated on entry).
+- `matrix.csv` in the generated set; `scripts/merge-incoming.py`.
+
+### Modified
+- Counts to 30 everywhere (README, SYNTHESIS, TRUST, hero.svg, CITATION v3.4); `as_of` 2026-10-06; METHODOLOGY clarifies that as_of is the latest wave's date while journals carry per-wave fetch dates.
+- Site: cell history now records verdict movement only (row additions are the changelog's job); lede count dynamic.
+
 ## [2026-10-06] - enforced reproducibility: public journals + regeneration gate
 
 ### Added

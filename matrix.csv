@@ -2,6 +2,8 @@ harness,id,version,subagents,workflow_orchestration,mcp,hooks_lifecycle,skills,m
 Aider,aider,v0.86.0 (latest GitHub release; PyPI aider-chat latest is 0.86.2),no,no,no,no,no,partial,partial,partial,no,no,yes,no,yes,yes
 Amazon Kiro,amazon-kiro,"Kiro CLI 2.27.0 (Oct 1, 2026); Kiro IDE 1.2.4 (Sep 30, 2026); Kiro Crew 0.7.2 (Sep 28, 2026); latest changelog entry Oct 2, 2026 (Claude Sonnet 5.5 rollout). KiroCrew insider release: v0.8.0-insider.12 (Oct 4, 2026)",yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
 Amazon Q Developer CLI,amazon-q-developer-cli,v1.19.7,yes,partial,yes,yes,no,yes,partial,no,yes,no,no,no,yes,partial
+Augment Code,augment-code,0.36.0,yes,yes,yes,yes,yes,yes,partial,unknown,yes,yes,yes,yes,yes,yes
+Bolt,bolt,"no published release tag or product version (release notes checked 2026-10-06; latest dated entry Sep 21-27, 2026)",unknown,unknown,partial,unknown,partial,yes,unknown,partial,partial,unknown,unknown,unknown,unknown,yes
 Claude Code,claude-code,v2.1.289,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes
 Cline,cline,desktop-v0.0.43,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes,partial,yes,yes
 Codex CLI,codex-cli,rust-v0.160.0,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
@@ -18,9 +20,12 @@ JetBrains Junie,jetbrains-junie,26.9.22 (3419.26),yes,partial,yes,yes,yes,yes,ye
 Kilo Code,kilo-code,v7.8.3,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes
 OpenCode,opencode,v1.18.34,yes,partial,yes,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes
 OpenHands,openhands,v1.24.0,yes,partial,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes
+Qodo,qodo,"Qodo 3.0 (vendor release label, changelog entry 2026-10-01)",unknown,partial,yes,unknown,yes,unknown,unknown,unknown,unknown,yes,unknown,unknown,unknown,unknown
 Qwen Code,qwen-code,v0.24.7,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes,yes
+Replit Agent,replit-agent,no published version or release date (docs checked 2026-10-06),unknown,partial,partial,unknown,partial,partial,unknown,partial,partial,unknown,partial,unknown,unknown,partial
 Roo Code,roo-code,v3.54.0,yes,partial,yes,unknown,yes,partial,partial,partial,partial,yes,yes,partial,yes,yes
 Sourcegraph Amp,sourcegraph-amp,0.0.1791187719-g319a37,yes,yes,yes,yes,yes,no,partial,no,yes,yes,yes,yes,yes,yes
+Tabnine,tabnine,v6.6.8,partial,partial,yes,partial,partial,partial,partial,partial,partial,yes,partial,partial,partial,yes
 Vibe,vibe,v2.25.8,yes,partial,yes,partial,yes,partial,partial,yes,yes,yes,yes,yes,yes,yes
 Windsurf,windsurf,3.10.48,yes,partial,yes,yes,yes,partial,yes,yes,yes,yes,yes,yes,yes,yes
 Zed,zed,v1.22.0,yes,partial,yes,no,yes,partial,yes,no,yes,no,yes,yes,yes,partial

@@ -17,3 +17,4 @@ see here is exactly what the pages were compiled from.
 | [wf_3decfb86-b1b.jsonl](wf_3decfb86-b1b.jsonl) | 3 | wave 3 — Crush, Amazon Q Developer CLI, Vibe |
 | [wf_bf7ccd99-1e2.jsonl](wf_bf7ccd99-1e2.jsonl) | 3 | wave 4 — Sourcegraph Amp, Factory Droid, JetBrains Junie |
 | [wf_7fea83f9-209.jsonl](wf_7fea83f9-209.jsonl) | 5 | wave 5 — Cursor, Windsurf, Google Jules, Amazon Kiro, Devin |
+| [wf_v34-incoming.jsonl](wf_v34-incoming.jsonl) | 5 | wave 6 — Augment Code, Tabnine, Replit Agent, Qodo, Bolt (independent researchers, merged via merge-incoming.py) |
