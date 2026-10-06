@@ -15,6 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: run drift check
+        # `drift-check.sh` queries the GitHub API through `gh`, which needs a
+        # token. Actions does NOT export GITHUB_TOKEN as an env var unless you
+        # do it (release.yml sets it explicitly; this file never did). Without
+        # it every `gh api` call failed unauthenticated and the script reported
+        # "no release found" for all 17 diffable repos — a monthly drift report
+        # that could not detect drift by construction, while `permissions:
+        # contents: write` above made it look authorized.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p reports
           { echo "## $(date -u +%F)"; ./scripts/drift-check.sh; echo; } >> reports/drift-log.md

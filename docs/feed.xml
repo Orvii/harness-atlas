@@ -7,6 +7,12 @@
   <updated>2026-10-06T00:00:00Z</updated>
   <author><name>Orvii</name></author>
   <entry>
+    <title>v3.4: thirty harnesses — the capability-vendor cluster</title>
+    <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/v3-4-thirty-harnesses-the-capability-vendor-clus</id>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <content type="html">Added Five rows: **Augment Code** (Auggie CLI + Cosmos: subagents, trigger automations, Expert memory, Git-marketplace plugins), **Tabnine** (broad CLI agent surface on a CLI the vendor calls maintenance-mode, deprecation after 2026-12-31), **Replit Agent** (cloud task system with plan-gated parallelism, no published version), **Qodo** (Agentic Toolbox: review agents and standards that plug into other agents — a capability layer with no execution layer), **Bolt** (web-native agent; plan review without a documented hard gate). `SYNTHESIS.md` §10 — the stack is splitting: capability vendors that execute nothing; web-native rows where the environment is the product; deprecation as a row property; unknowns concentrating in hosted vendors. `GATES.md` eighth kind — the gate that opens under automation: Tabnine&#x27;s headless YOLO switch, Bolt&#x27;s plan-after-first-build, Replit&#x27;s billable review, Augment&#x27;s CLI-only enforcement. `TRUST.md` — five rows; Qodo recorded as n/a on the sandbox axis (it executes nothing); new bullet on review-layer vendors riding host agents&#x27; trust models. `journals/wf_v34-incoming.jsonl` — wave 6, five independent researchers, merged via the new `scripts/merge-incoming.py` (contract-validated on entry).</content>
+  </entry>
+  <entry>
     <title>enforced reproducibility: public journals + regeneration gate</title>
     <id>tag:github.com,2026:Orvii/harness-atlas/2026-10-06/enforced-reproducibility-public-journals-regener</id>
     <updated>2026-10-06T00:00:00Z</updated>

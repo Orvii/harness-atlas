@@ -6,7 +6,24 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 - <<'PY'
-import json, re, subprocess
+import json, re, subprocess, sys
+
+# Fail loudly without API auth. Every `gh api` call below needs a token; when
+# one is missing the API answers unauthenticated, each repo reports "no
+# release found", and the script prints "0 drifted" — a clean-looking report
+# produced by not looking. That is exactly what the first CI run of this
+# script did (the workflow never exported GITHUB_TOKEN). A report that cannot
+# fail is worse than no report.
+probe = subprocess.run(
+    ["gh", "api", "repos/cli/cli/releases/latest", "--jq", ".tag_name"],
+    capture_output=True, text=True, timeout=30,
+)
+if probe.returncode != 0 or not probe.stdout.strip():
+    sys.exit(
+        "drift-check: GitHub API is not authenticated — set GH_TOKEN "
+        "(CI: `GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`). Refusing to print a "
+        "report that would read as 'no drift'."
+    )
 
 repos = {}
 cur = None

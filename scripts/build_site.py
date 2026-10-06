@@ -245,9 +245,30 @@ def main():
         h["history"] = hist.get(h["id"], {})
     payload = {"as_of": as_of, "version": version, "caps": CAPS,
                "cap_label": CAP_LABEL, "harnesses": harnesses}
-    html = TEMPLATE.replace("__DATA__", json.dumps(payload, ensure_ascii=False))
-    html = html.replace("__COUNT__", str(len(harnesses)))
-    html = html.replace("__JSONLD__", json.dumps({
+
+    def embed(value) -> str:
+        """Serialize JSON for an inline <script>, `</script>`-safe.
+
+        `json.dumps` does NOT escape `<`, so a note or evidence URL containing
+        `</script>` closes the block early and everything after it becomes page
+        markup — a stored-XSS shape in a project whose docs are fetched from
+        the open web. Escaping `<` as `\\u003c` is the standard safe embedding
+        and is transparent to `JSON.parse`. Verified with a real browser: the
+        injected handler executed and the grid died before this change.
+        """
+        return (
+            json.dumps(value, ensure_ascii=False)
+            .replace("<", "\\u003c")
+            .replace(" ", "\\u2028")
+            .replace(" ", "\\u2029")
+        )
+
+    # __COUNT__ FIRST: it is a global replace over the whole document, so
+    # doing it after __DATA__ would rewrite the literal text `__COUNT__`
+    # wherever a harness note happened to contain it.
+    html = TEMPLATE.replace("__COUNT__", str(len(harnesses)))
+    html = html.replace("__DATA__", embed(payload))
+    html = html.replace("__JSONLD__", embed({
         "@context": "https://schema.org",
         "@type": "Dataset",
         "name": "harness-atlas — capability matrix of AI coding harnesses",
@@ -263,7 +284,7 @@ def main():
         "version": version,
         "variableMeasured": [CAP_LABEL[c] for c in CAPS],
         "measurementTechnique": "documentation review with per-cell evidence URLs",
-    }, ensure_ascii=False))
+    }))
     SITE.mkdir(exist_ok=True)
     (SITE / "index.html").write_text(html)
     style = re.search(r"<style>(.*?)</style>", TEMPLATE, re.S).group(1)
