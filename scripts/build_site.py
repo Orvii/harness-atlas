@@ -348,7 +348,7 @@ TEMPLATE = r"""<!doctype html>
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f4efe6; --bg2: #ece4d6; --panel: #fbf8f2; --panel2: #efe7d9; --ink: #1d150c;
-    --muted: #6e5c50; --faint: #75655a; --line: #d8cbb8;
+    --muted: #6e5c50; --faint: #6f6056; --line: #d8cbb8;
     --yes: #c96c00; --partial: #a37300; --no: #b3a493; --unknown: #9a8877;
   }
 }
@@ -739,6 +739,10 @@ function render(rows) {
   grid.innerHTML = head + body;
   document.getElementById("count").textContent = rows.length + " of " + DATA.harnesses.length + " harnesses";
   applyCap();
+  // render() rebuilds every .cmp button from scratch, so a filter/sort/verdict
+  // change used to wipe aria-pressed back to "false" while `picked` still held
+  // the selection — the plate showed N columns, the buttons showed none.
+  syncPicked();
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m])); }
 
@@ -755,7 +759,30 @@ document.getElementById("q").addEventListener("input", rerender);
 verSel.addEventListener("change", rerender);
 sortSel.addEventListener("change", rerender);
 
+/* compare selection — `picked` is the ONE source of truth for both the
+   compare plate and the .cmp buttons' aria-pressed state. Every path that
+   changes the selection, and every path that rebuilds the buttons carrying
+   the attribute (render()), funnels through syncPicked(); nothing else may
+   write aria-pressed, or a future control (a clear-all, a remove-from-
+   compare button) reintroduces the drift this consolidation removed. */
 const picked = [];
+function syncPicked() {
+  document.querySelectorAll(".cmp").forEach(x =>
+    x.setAttribute("aria-pressed", picked.includes(x.dataset.h) ? "true" : "false"));
+  renderCompare();
+}
+function togglePick(id) {
+  const i = picked.indexOf(id);
+  if (i >= 0) picked.splice(i, 1);
+  else {
+    // Push first, trim after: `picked.shift()` inside an `else if (full)`
+    // branch dropped the oldest AND never added the click, so the 5th pick
+    // silently did nothing. The click must always end selected.
+    picked.push(id);
+    while (picked.length > 4) picked.shift();
+  }
+  syncPicked();
+}
 function renderCompare() {
   const box = document.getElementById("compare");
   const tbl = document.getElementById("cmp-table");
@@ -783,13 +810,7 @@ document.getElementById("grid").addEventListener("click", e => {
   const b = e.target.closest(".cmp");
   if (!b) return;
   e.stopPropagation();
-  const i = picked.indexOf(b.dataset.h);
-  if (i >= 0) picked.splice(i, 1);
-  else if (picked.length >= 4) picked.shift();
-  else picked.push(b.dataset.h);
-  document.querySelectorAll(".cmp").forEach(x =>
-    x.setAttribute("aria-pressed", picked.includes(x.dataset.h)));
-  renderCompare();
+  togglePick(b.dataset.h);
   if (picked.length >= 2) document.getElementById("compare").scrollIntoView({ block: "nearest" });
 });
 
@@ -902,6 +923,14 @@ METHOD_TEMPLATE = r"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>harness-atlas — why trust this</title>
 <meta name="description" content="How every cell in the harness-atlas grid is produced, pinned, and kept honest — and what a cell is not.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="harness-atlas — why trust this grid">
+<meta property="og:description" content="The evidence contract behind the grid: every cell carries a fetched doc URL and the verbatim sentence it was read from, versions are pinned, and an unanswered cell is marked unknown rather than guessed.">
+<meta property="og:url" content="https://orvii.github.io/harness-atlas/method.html">
+<meta property="og:image" content="https://orvii.github.io/harness-atlas/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="harness-atlas — why trust this grid">
+<meta name="twitter:description" content="Per-cell doc URLs, verbatim quotes, version pins, unknown over guesses: how the capability grid is produced and how you audit any cell in five minutes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
