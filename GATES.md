@@ -20,7 +20,7 @@ v3.3's cloud-autonomous rows add a gate the local rows never had: **the loop is 
 
 ## A sixth kind: the closed-source gate
 
-Ten rows now have no public product repo — v3.2's **Sourcegraph Amp**, **Factory Droid**, **JetBrains Junie**, v3.3's **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro**, **Devin**, and v3.4's **Replit** and **Mistral Vibe** (the latter's repository returns 404) — so their gates cannot be checked against code. Two consequences the open rows do not have:
+Fourteen rows now have no public product repo — v3.2's **Sourcegraph Amp**, **Factory Droid**, **JetBrains Junie**, v3.3's **Cursor**, **Windsurf/Devin Desktop**, **Google Jules**, **Amazon Kiro**, **Devin**, v3.4's **Replit**, and v3.5's **Trae**, **Google Antigravity**, **Qoder**, **Lovable** and **v0** — so their gates cannot be checked against code. (Mistral Vibe sits at the edge of this list: its product ships from the public repo `mistralai/mistral-vibe`; only the `mistralai/vibe` spelling of the URL 404s.) Two consequences the open rows do not have:
 
 - **The gate's implementation is unreadable.** Droid documents kernel-level isolation (Seatbelt; bubblewrap+seccomp; a domain-allowlist egress proxy) and Junie documents an OS-level `/sandbox`, but neither profile is in a repo you can read. The gate is a vendor assertion.
 - **Deprecation arrives without a diff.** Amp's stated posture is "no backward compatibility": features are removed and announced in a chronicle post. A capability cell for a closed product should be treated as having a shorter half-life than an identical-looking cell for an open one, even on the same snapshot date.
