@@ -12,6 +12,14 @@ The site's whole point is the atlas's contract made clickable: every cell
 opens a drawer showing the note and the fetched-doc URL the verdict came
 from. If a cell has no evidence URL in its page, the drawer says so rather
 than linking nowhere.
+
+The agent-facing files are generated from the SAME payload, so they can
+never disagree with the grid: matrix.json (the embedded DATA as its own
+file — an agent should not have to parse index.html), llms.txt (the
+llmstxt.org index of every artifact, emitted next to sitemap.xml), plus
+feed.xml, robots.txt and sitemap.xml. Every path llms.txt names is
+asserted to exist before it is written; a dead link is a build warning,
+never an emitted line.
 """
 import json
 import re
@@ -21,6 +29,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "docs"
+SITE_URL = "https://orvii.github.io/harness-atlas"
+REPO_URL = "https://github.com/Orvii/harness-atlas"
 
 CAPS = [
     "subagents", "workflow_orchestration", "mcp", "hooks_lifecycle", "skills",
@@ -211,6 +221,128 @@ def build_feed(as_of: str) -> str:
     return "\n".join(xml) + "\n"
 
 
+# The repo-relative files llms.txt links to, with their one-line descriptions.
+# Each is existence-checked at build time; a missing one is warned about and
+# omitted rather than emitted as a dead link.
+LLMS_REPO_FILES = [
+    ("GATES.md", "gates between \"documented\" and \"shipped\" — flags, plan tiers, OS limits, maturity labels, deprecations, with the note behind each"),
+    ("TRUST.md", "how each harness bounds what the agent may do — permission prompts, OS sandboxes, reviewer models, and their failure modes"),
+    ("SYNTHESIS.md", "what the matrix actually says — the capability floor, cross-harness interop, and where the trust boundary sits"),
+    ("METHODOLOGY.md", "how every cell is produced and regenerated: journals, the generator, sanitization, CI reproducibility"),
+    ("VERIFYING.md", "the five-minute audit procedure for any single cell"),
+    ("reports/drift-log.md", "monthly CI drift log — every version pin compared against the current release, or reported as not-diffable"),
+    ("reports/link-rot.md", "link-rot check results — dead evidence URLs separated from blocked ones"),
+    ("CHANGELOG.md", "release notes per data snapshot; the Atom feed mirrors the last 10 entries"),
+]
+LLMS_OPTIONAL = [
+    ("README.md", "the atlas in one screen — what it is, how to re-run it"),
+    ("CONTRIBUTING.md", "how to correct a cell: research first, regenerate, never hand-edit"),
+    ("LICENSE", "MIT — reuse with attribution"),
+    ("CITATION.cff", "citation metadata; the repo's releases page carries the release tags"),
+]
+
+
+def _verdict_sentence() -> str:
+    return (
+        "Support verdicts are literal readings of vendor documentation on the "
+        "snapshot date: `yes` = the doc describes the capability, `partial` = "
+        "described with a stated limitation (the note names it), `no` = the doc "
+        "states its absence, `unknown` = no fetched page answers the question "
+        "and it is never guessed."
+    )
+
+
+def _search_description(payload: dict) -> str:
+    """The machine-consumable half of the summary, built from the payload so
+    it can never drift from the grid it describes."""
+    caps = ", ".join(CAP_LABEL[c] for c in payload["caps"])
+    n = len(payload["harnesses"])
+    return (
+        f"Agent starting point: docs/matrix.json is the canonical payload "
+        f"(as_of {payload['as_of']}, release {payload['version']}), covering "
+        f"{n} harnesses x {len(payload['caps'])} capabilities: {caps}. "
+        "Every cell records what the vendor's own documentation stated, with "
+        "the note and the fetched-doc URL behind each verdict. "
+        + _verdict_sentence()
+    )
+
+
+def build_llms_txt(payload: dict) -> str:
+    """The llmstxt.org v2 index for the atlas's agent-facing surface.
+
+    Emitted from the same payload as index.html, so the file list, counts and
+    snapshot date cannot drift from the grid. Every site path it names is
+    existence-checked (ROOT-anchored); a dead link is omitted with a warning,
+    never emitted.
+    """
+    n = len(payload["harnesses"])
+    lines = [
+        "# harness-atlas",
+        "",
+        f"> harness-atlas is a dated, version-pinned capability matrix of {n} AI coding",
+        f"> harnesses across {len(payload['caps'])} capabilities, every cell citing the vendor",
+        f"> documentation page behind it. Snapshot {payload['as_of']}, release {payload['version']}.",
+        f"> Each row pins the version it was read from, evidence is quoted verbatim in the",
+        f"> public journals, and an unanswered cell is marked `unknown` — never guessed.",
+        "",
+        _search_description(payload),
+        "",
+        "When quoting a cell, cite the snapshot date, not the repository URL: vendors",
+        "ship weekly and the grid deliberately does not move between research runs.",
+        "",
+        "## Data",
+        "",
+        f"- [matrix.json]({SITE_URL}/matrix.json): the canonical machine-readable payload — the same object the grid embeds. One entry per harness: `id`, `name`, `version` (pin), `repo`, `docs` (docs home), `promises`, `caps[]` (`cap`, `support`, `note`, `evidence`), `sections` (architecture, context_management, ecosystem, governance, limitations), `quotes[]` (verbatim vendor-doc quotes).",
+        f"- [matrix.csv]({REPO_URL}/blob/main/matrix.csv): the matrix as CSV, one row per harness, human- and spreadsheet-readable. Same harness order as matrix.json.",
+        f"- [matrix.md]({REPO_URL}/blob/main/matrix.md): the matrix as markdown, one section per harness; every verdict row carries its note and evidence link.",
+        f"- [harness pages]({REPO_URL}/tree/main/harnesses): one markdown page per harness at `harnesses/<id>.md`, where `<id>` is the `id` field in matrix.json (the first is [aider.md]({REPO_URL}/blob/main/harnesses/aider.md)). Each page carries the capability table, deep sections, and quotes.",
+        f"- [journals]({REPO_URL}/tree/main/journals): sanitized researcher journals (JSONL), the public source of every page; regenerate the whole atlas from these files alone.",
+        "",
+        "## Trust and method",
+        "",
+    ]
+    for path, desc in LLMS_REPO_FILES:
+        if not (ROOT / path).exists():
+            print(f"WARNING: llms.txt skips {path} — not on disk")
+            continue
+        lines.append(f"- [{path}]({REPO_URL}/blob/main/{path}): {desc}")
+    lines += [
+        "",
+        "## Site files",
+        "",
+        f"- [the grid]({SITE_URL}/): the clickable matrix — every cell opens the note and evidence URL it was read from. Prefer matrix.json when parsing; this page is for humans. Both site pages carry `<link rel=\"describedby\">` pointing back here.",
+        f"- [method.html]({SITE_URL}/method.html): why trust this grid — the evidence contract, the pipeline, and what a cell is not.",
+        f"- [feed.xml]({SITE_URL}/feed.xml): Atom feed of data snapshots, one entry per release; the CHANGELOG's own words.",
+        f"- [sitemap.xml]({SITE_URL}/sitemap.xml): every indexable page on this site.",
+        "",
+        "## Optional",
+        "",
+        f"- [the matrix in YAML]({REPO_URL}/blob/main/matrix.yaml): the hand-maintained input the generator reads; only useful if you are re-running a research wave.",
+        f"- [og.png]({SITE_URL}/og.png): the social card image, nothing an agent needs.",
+    ]
+    for path, desc in LLMS_OPTIONAL:
+        if not (ROOT / path).exists():
+            print(f"WARNING: llms.txt skips {path} — not on disk")
+            continue
+        lines.append(f"- [{path}]({REPO_URL}/blob/main/{path}): {desc}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def check_named_paths(text: str) -> list[str]:
+    """Site paths a generated file names that do not exist on disk.
+
+    SITE is docs/, the directory GitHub Pages publishes, so existence against
+    SITE covers exactly the paths a published URL may be missing.
+    """
+    missing = []
+    for m in re.finditer(rf"{re.escape(SITE_URL)}/([^\s)\"'>]+)", text):
+        p = m.group(1).rstrip(".,;:")
+        if p and not (SITE / p).exists():
+            missing.append(p)
+    return missing
+
+
 def main():
     order, data = load_yaml()
     pages = load_pages()
@@ -301,6 +433,16 @@ def main():
                                       .replace("__N__", str(len(harnesses))), encoding="utf-8")
     (SITE / ".nojekyll").write_text("", encoding="utf-8")
     (SITE / "feed.xml").write_text(build_feed(as_of), encoding="utf-8")
+    # The embedded DATA as its own file: an agent consuming the atlas should
+    # not have to extract the payload out of index.html. Same object, one
+    # writer (payload), so the two can never disagree.
+    (SITE / "matrix.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    llms = build_llms_txt(payload)
+    (SITE / "llms.txt").write_text(llms, encoding="utf-8")
+    bad = check_named_paths(llms)
+    if bad:
+        print("WARNING: llms.txt names site paths that do not exist: " + ", ".join(bad))
     (SITE / "robots.txt").write_text(
         "User-agent: *\nAllow: /\nSitemap: https://orvii.github.io/harness-atlas/sitemap.xml\n", encoding="utf-8")
     (SITE / "sitemap.xml").write_text(
@@ -328,6 +470,7 @@ TEMPLATE = r"""<!doctype html>
 <title>harness-atlas — the capability grid, clickable</title>
 <meta name="description" content="What __COUNT__ AI coding harnesses promise and support. Every cell opens the note and the fetched-doc URL it was read from. Versions pinned, snapshot dated.">
 <link rel="alternate" type="application/atom+xml" title="harness-atlas data snapshots" href="./feed.xml">
+<link rel="describedby" type="text/plain" title="Agent index (llms.txt)" href="./llms.txt">
 <meta property="og:type" content="website">
 <meta property="og:title" content="harness-atlas — what coding agents promise, and what they support">
 <meta property="og:description" content="__COUNT__ AI coding harnesses x 14 capabilities, one snapshot date. Every cell cites the vendor doc it was read from; versions pinned; unknown over guessed.">
@@ -931,6 +1074,7 @@ METHOD_TEMPLATE = r"""<!doctype html>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="harness-atlas — why trust this grid">
 <meta name="twitter:description" content="Per-cell doc URLs, verbatim quotes, version pins, unknown over guesses: how the capability grid is produced and how you audit any cell in five minutes.">
+<link rel="describedby" type="text/plain" title="Agent index (llms.txt)" href="./llms.txt">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">

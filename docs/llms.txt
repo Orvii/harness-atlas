@@ -1,0 +1,47 @@
+# harness-atlas
+
+> harness-atlas is a dated, version-pinned capability matrix of 37 AI coding
+> harnesses across 14 capabilities, every cell citing the vendor
+> documentation page behind it. Snapshot 2026-10-06, release v3.5.
+> Each row pins the version it was read from, evidence is quoted verbatim in the
+> public journals, and an unanswered cell is marked `unknown` — never guessed.
+
+Agent starting point: docs/matrix.json is the canonical payload (as_of 2026-10-06, release v3.5), covering 37 harnesses x 14 capabilities: subagents, orchestration, MCP, hooks, skills, memory, sandboxing, plan mode, background, IDE, models, plugins, resume, cost. Every cell records what the vendor's own documentation stated, with the note and the fetched-doc URL behind each verdict. Support verdicts are literal readings of vendor documentation on the snapshot date: `yes` = the doc describes the capability, `partial` = described with a stated limitation (the note names it), `no` = the doc states its absence, `unknown` = no fetched page answers the question and it is never guessed.
+
+When quoting a cell, cite the snapshot date, not the repository URL: vendors
+ship weekly and the grid deliberately does not move between research runs.
+
+## Data
+
+- [matrix.json](https://orvii.github.io/harness-atlas/matrix.json): the canonical machine-readable payload — the same object the grid embeds. One entry per harness: `id`, `name`, `version` (pin), `repo`, `docs` (docs home), `promises`, `caps[]` (`cap`, `support`, `note`, `evidence`), `sections` (architecture, context_management, ecosystem, governance, limitations), `quotes[]` (verbatim vendor-doc quotes).
+- [matrix.csv](https://github.com/Orvii/harness-atlas/blob/main/matrix.csv): the matrix as CSV, one row per harness, human- and spreadsheet-readable. Same harness order as matrix.json.
+- [matrix.md](https://github.com/Orvii/harness-atlas/blob/main/matrix.md): the matrix as markdown, one section per harness; every verdict row carries its note and evidence link.
+- [harness pages](https://github.com/Orvii/harness-atlas/tree/main/harnesses): one markdown page per harness at `harnesses/<id>.md`, where `<id>` is the `id` field in matrix.json (the first is [aider.md](https://github.com/Orvii/harness-atlas/blob/main/harnesses/aider.md)). Each page carries the capability table, deep sections, and quotes.
+- [journals](https://github.com/Orvii/harness-atlas/tree/main/journals): sanitized researcher journals (JSONL), the public source of every page; regenerate the whole atlas from these files alone.
+
+## Trust and method
+
+- [GATES.md](https://github.com/Orvii/harness-atlas/blob/main/GATES.md): gates between "documented" and "shipped" — flags, plan tiers, OS limits, maturity labels, deprecations, with the note behind each
+- [TRUST.md](https://github.com/Orvii/harness-atlas/blob/main/TRUST.md): how each harness bounds what the agent may do — permission prompts, OS sandboxes, reviewer models, and their failure modes
+- [SYNTHESIS.md](https://github.com/Orvii/harness-atlas/blob/main/SYNTHESIS.md): what the matrix actually says — the capability floor, cross-harness interop, and where the trust boundary sits
+- [METHODOLOGY.md](https://github.com/Orvii/harness-atlas/blob/main/METHODOLOGY.md): how every cell is produced and regenerated: journals, the generator, sanitization, CI reproducibility
+- [VERIFYING.md](https://github.com/Orvii/harness-atlas/blob/main/VERIFYING.md): the five-minute audit procedure for any single cell
+- [reports/drift-log.md](https://github.com/Orvii/harness-atlas/blob/main/reports/drift-log.md): monthly CI drift log — every version pin compared against the current release, or reported as not-diffable
+- [reports/link-rot.md](https://github.com/Orvii/harness-atlas/blob/main/reports/link-rot.md): link-rot check results — dead evidence URLs separated from blocked ones
+- [CHANGELOG.md](https://github.com/Orvii/harness-atlas/blob/main/CHANGELOG.md): release notes per data snapshot; the Atom feed mirrors the last 10 entries
+
+## Site files
+
+- [the grid](https://orvii.github.io/harness-atlas/): the clickable matrix — every cell opens the note and evidence URL it was read from. Prefer matrix.json when parsing; this page is for humans. Both site pages carry `<link rel="describedby">` pointing back here.
+- [method.html](https://orvii.github.io/harness-atlas/method.html): why trust this grid — the evidence contract, the pipeline, and what a cell is not.
+- [feed.xml](https://orvii.github.io/harness-atlas/feed.xml): Atom feed of data snapshots, one entry per release; the CHANGELOG's own words.
+- [sitemap.xml](https://orvii.github.io/harness-atlas/sitemap.xml): every indexable page on this site.
+
+## Optional
+
+- [the matrix in YAML](https://github.com/Orvii/harness-atlas/blob/main/matrix.yaml): the hand-maintained input the generator reads; only useful if you are re-running a research wave.
+- [og.png](https://orvii.github.io/harness-atlas/og.png): the social card image, nothing an agent needs.
+- [README.md](https://github.com/Orvii/harness-atlas/blob/main/README.md): the atlas in one screen — what it is, how to re-run it
+- [CONTRIBUTING.md](https://github.com/Orvii/harness-atlas/blob/main/CONTRIBUTING.md): how to correct a cell: research first, regenerate, never hand-edit
+- [LICENSE](https://github.com/Orvii/harness-atlas/blob/main/LICENSE): MIT — reuse with attribution
+- [CITATION.cff](https://github.com/Orvii/harness-atlas/blob/main/CITATION.cff): citation metadata; the repo's releases page carries the release tags
